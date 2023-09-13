@@ -86,6 +86,11 @@
 				color:rgb(150, 255, 150);
 			}
 
+			table{
+				border: 1px solid white;
+				margin:5px;
+			}
+
 		</style>
 		<div class="reveal">
 			<div class="slides">
@@ -531,48 +536,587 @@ Example Heuristic in E:
 				</section>
 
 				<section id="summarizedResults">
-					<section id="slhTable">
-						<h3>SLH Result Table</h3>
-
-						<table style="font-size:0.5em;">
-							<tr><th>Run</th><th>Solved</th><th>Solved vs Auto</th><th>Processed</th><th>Processed vs Auto</th><th>Generated</th><th>Proof Clauses</th><th>Efficiency</th><th></th></tr>
-							<tr><td>SLHRoundRobin</td><td>748.6</td><td>+ 98.6 , - 29.2</td><td>1492.59</td><td>-2268.00</td><td>4796.21</td><td>11.51</td><td>0.024369628</td></tr>
-							<tr><td>SLHConstCatDistilled_gain5_</td><td>745.6</td><td>+100.0 , - 33.6</td><td>1636.00</td><td>-2113.97</td><td>5518.08</td><td>11.67</td><td>0.023222676</td></tr>
-							<tr><td>SLHNN</td><td>735.2</td><td>+ 94.6 , - 38.6</td><td>1671.66</td><td>-2066.91</td><td>5757.04</td><td>11.76</td><td>0.024004336</td></tr>
-							<tr><td>SLHConstCat</td><td>735.2</td><td>+ 93.8 , - 37.8</td><td>1660.98</td><td>-2015.63</td><td>5690.13</td><td>11.77</td><td>0.024753276</td></tr>
-							<tr><td>SLHRoundRobinAllOnes</td><td>728.4</td><td>+ 91.4 , - 42.2</td><td>1562.64</td><td>-2009.59</td><td>5617.02</td><td>11.77</td><td>0.025121361</td></tr>
-							<tr><td>SLHAuto</td><td>679.2</td><td>+  0.0 , -  0.0</td><td>1869.95</td><td>0.00</td><td>10963.13</td><td>11.10</td><td>0.016930621</td></tr>
-						</table>
-					</section>
-					
-					
-					<section id="vbtTable">
-						<h3>VBT Result Table</h3>
-						<table style="font-size:0.5em;">
-							<tr><th>Run</th><th>Solved</th><th>Solved vs Auto</th><th>Processed</th><th>Processed vs Auto</th><th>Generated</th><th>Proof Clauses</th><th>Efficiency</th><th></th></tr>
-							<tr><td>VBTConstCatDistilled_gain5_</td><td>609.2</td><td>+ 94.8 , - 13.0</td><td>2241.31</td><td>-650.90</td><td>31921.01</td><td>12.41</td><td>0.015359553</td></tr>
-							<tr><td>VBTConstCat</td><td>583.2</td><td>+ 75.8 , - 20.0</td><td>2061.25</td><td>-623.66</td><td>32983.52</td><td>12.67</td><td>0.016450104</td></tr>
-							<tr><td>VBTRoundRobin</td><td>568.2</td><td>+ 53.8 , - 13.0</td><td>1928.93</td><td>-412.63</td><td>34709.00</td><td>12.94</td><td>0.015339280</td></tr>
-							<tr><td>VBTNN</td><td>560.8</td><td>+ 57.0 , - 23.6</td><td>1854.33</td><td>-558.98</td><td>34194.56</td><td>12.56</td><td>0.015525148</td></tr>
-							<tr><td>VBTRoundRobinAllOnes</td><td>540.2</td><td>+ 43.0 , - 30.2</td><td>1643.44</td><td>-582.00</td><td>33291.75</td><td>12.73</td><td>0.016816789</td></tr>
-							<tr><td>VBTAuto</td><td>527.4</td><td>+  0.0 , -  0.0</td><td>1727.11</td><td>0.00</td><td>35068.73</td><td>12.59</td><td>0.014308966</td></tr>
+					<section id="solvedTables">
+						<h3>Number of Problems Solved</h3>
+						<div class="row">
+							<table style="font-size:0.4em;">
+								<tr>
+									<th>Run</th>
+									<th>Solved</th>
+									<th>Solved vs Auto</th>
+								</tr>
+								<tr>
+									<td>SLHRoundRobin</td>
+									<td>3743</td>
+									<td>+493 , -146</td>
+								</tr>
+								<tr>
+									<td>SLHConstCatDistilled_gain5_</td>
+									<td>3728</td>
+									<td>+500 , -168</td>
+								</tr>
+								<tr>
+									<td>SLHNN</td>
+									<td>3676</td>
+									<td>+473 , -193</td>
+								</tr>
+								<tr>
+									<td>SLHConstCat</td>
+									<td>3676</td>
+									<td>+469 , -189</td>
+								</tr>
+								<tr>
+									<td>SLHRoundRobinAllOnes</td>
+									<td>3642</td>
+									<td>+457 , -211</td>
+								</tr>
+								<tr>
+									<td>SLHAuto</td>
+									<td>3396</td>
+									<td>+0 , -0</td>
+								</tr>
 							</table>
-							
+							<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<th>Run</th>                                                                                                                                                                                                                                                                                                               
+								<th>Solved</th>                                                                                                                                                                                                                                                                                                            
+								<th>Solved vs Auto</th>                                                                                                                                                                                                                                                                                                    
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>MPTNN</td>                                                                                                                                                                                                                                                                                                             
+								<td>1232</td>                                                                                                                                                                                                                                                                                                              
+								<td>+125 , -44</td>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>MPTConstCat</td>                                                                                                                                                                                                                                                                                                       
+								<td>1229</td>                                                                                                                                                                                                                                                                                                              
+								<td>+125 , -47</td>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>MPTConstCatDistilled_gain5_</td>                                                                                                                                                                                                                                                                                       
+								<td>1226</td>                                                                                                                                                                                                                                                                                                              
+								<td>+124 , -49</td>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>MPTRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+								<td>1219</td>                                                                                                                                                                                                                                                                                                              
+								<td>+115 , -47</td>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>MPTRoundRobin</td>                                                                                                                                                                                                                                                                                                     
+								<td>1210</td>                                                                                                                                                                                                                                                                                                              
+								<td>+113 , -54</td>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>MPTAuto</td>                                                                                                                                                                                                                                                                                                           
+								<td>1151</td>                                                                                                                                                                                                                                                                                                              
+								<td>+0 , -0</td>                                                                                                                                                                                                                                                                                                           
+								</tr>                                                                                                                                                                                                                                                                                                                      
+							</table>               
+						</div><br>
+
+						<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<th>Run</th>                                                                                                                                                                                                                                                                                                               
+							<th>Solved</th>                                                                                                                                                                                                                                                                                                            
+							<th>Solved vs Auto</th>                                                                                                                                                                                                                                                                                                    
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>VBTConstCatDistilled_gain5_</td>                                                                                                                                                                                                                                                                                       
+							<td>3046</td>                                                                                                                                                                                                                                                                                                              
+							<td>+474 , -65</td>                                                                                                                                                                                                                                                                                                        
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>VBTConstCat</td>                                                                                                                                                                                                                                                                                                       
+							<td>2916</td>                                                                                                                                                                                                                                                                                                              
+							<td>+379 , -100</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>VBTRoundRobin</td>                                                                                                                                                                                                                                                                                                     
+							<td>2841</td>                                                                                                                                                                                                                                                                                                              
+							<td>+269 , -65</td>                                                                                                                                                                                                                                                                                                        
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>VBTNN</td>                                                                                                                                                                                                                                                                                                             
+							<td>2804</td>                                                                                                                                                                                                                                                                                                              
+							<td>+285 , -118</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>VBTRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+							<td>2701</td>                                                                                                                                                                                                                                                                                                              
+							<td>+215 , -151</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>VBTAuto</td>                                                                                                                                                                                                                                                                                                           
+							<td>2637</td>                                                                                                                                                                                                                                                                                                              
+							<td>+0 , -0</td>                                                                                                                                                                                                                                                                                                           
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							</table>                 
+
 					</section>
 					
 					
-					<section id="mptTable">
-						<h3>MPTPTP2078 Result Table</h3>
-						<table style="font-size:0.5em;">
-							<tr><th>Run</th><th>Solved</th><th>Solved vs Auto</th><th>Processed</th><th>Processed vs Auto</th><th>Generated</th><th>Proof Clauses</th><th>Efficiency</th><th></th></tr>
-							<tr><td>MPTNN</td><td>246.4</td><td>+ 25.0 , -  8.8</td><td>443.56</td><td>-2413.80</td><td>833.77</td><td>25.56</td><td>0.295987830</td></tr>
-							<tr><td>MPTConstCat</td><td>245.8</td><td>+ 25.0 , -  9.4</td><td>456.53</td><td>-2388.32</td><td>822.91</td><td>25.55</td><td>0.295591068</td></tr>
-							<tr><td>MPTConstCatDistilled_gain5_</td><td>245.2</td><td>+ 24.8 , -  9.8</td><td>450.32</td><td>-2199.28</td><td>1090.46</td><td>25.71</td><td>0.264860238</td></tr>
-							<tr><td>MPTRoundRobinAllOnes</td><td>243.8</td><td>+ 23.0 , -  9.4</td><td>416.78</td><td>-2405.30</td><td>843.93</td><td>25.63</td><td>0.295204483</td></tr>
-							<tr><td>MPTRoundRobin</td><td>242.0</td><td>+ 22.6 , - 10.8</td><td>555.46</td><td>-2223.53</td><td>1045.81</td><td>25.71</td><td>0.275407996</td></tr>
-							<tr><td>MPTAuto</td><td>230.2</td><td>+  0.0 , -  0.0</td><td>861.47</td><td>0.00</td><td>2745.62</td><td>23.98</td><td>0.232237375</td></tr>
+					<section id="processedTables">
+						<h3>Number of Processed Clauses</h3>
+						<div class="row">
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Processed</th>
+								<th>Processed vs Auto</th>
+								</tr>
+								<tr>
+								<td>SLHRoundRobin</td>
+								<td>811.50</td>
+								<td>-2247.36</td>
+								</tr>
+								<tr>
+								<td>SLHConstCatDistilled_gain5_</td>
+								<td>879.00</td>
+								<td>-1778.16</td>
+								</tr>
+								<tr>
+								<td>SLHConstCat</td>
+								<td>939.00</td>
+								<td>-1710.15</td>
+								</tr>
+								<tr>
+								<td>SLHRoundRobinAllOnes</td>
+								<td>940.50</td>
+								<td>-1768.82</td>
+								</tr>
+								<tr>
+								<td>SLHNN</td>
+								<td>946.00</td>
+								<td>-1731.68</td>
+								</tr>
+								<tr>
+								<td>SLHAuto</td>
+								<td>1548.00</td>
+								<td>0.00</td>
+								</tr>
+							</table>
+
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Processed</th>
+								<th>Processed vs Auto</th>
+								</tr>
+								<tr>
+								<td>MPTConstCat</td>
+								<td>106.00</td>
+								<td>-3590.75</td>
+								</tr>
+								<tr>
+								<td>MPTNN</td>
+								<td>108.00</td>
+								<td>-3564.56</td>
+								</tr>
+								<tr>
+								<td>MPTRoundRobinAllOnes</td>
+								<td>111.00</td>
+								<td>-3623.32</td>
+								</tr>
+								<tr>
+								<td>MPTRoundRobin</td>
+								<td>130.00</td>
+								<td>-3182.97</td>
+								</tr>
+								<tr>
+								<td>MPTAuto</td>
+								<td>131.00</td>
+								<td>0.00</td>
+								</tr>
+								<tr>
+								<td>MPTConstCatDistilled_gain5_</td>
+								<td>138.00</td>
+								<td>-3433.95</td>
+								</tr>
+							</table>
+						</div><br>
+
+						<table style="font-size:0.4em;">
+							<tr>
+							<th>Run</th>
+							<th>Processed</th>
+							<th>Processed vs Auto</th>
+							</tr>
+							<tr>
+							<td>VBTConstCatDistilled_gain5_</td>
+							<td>1535.00</td>
+							<td>-519.26</td>
+							</tr>
+							<tr>
+							<td>VBTRoundRobinAllOnes</td>
+							<td>1565.50</td>
+							<td>-596.00</td>
+							</tr>
+							<tr>
+							<td>VBTConstCat</td>
+							<td>1566.00</td>
+							<td>-593.85</td>
+							</tr>
+							<tr>
+							<td>VBTNN</td>
+							<td>1646.00</td>
+							<td>-516.44</td>
+							</tr>
+							<tr>
+							<td>VBTRoundRobin</td>
+							<td>1722.00</td>
+							<td>-422.24</td>
+							</tr>
+							<tr>
+							<td>VBTAuto</td>
+							<td>1927.00</td>
+							<td>0.00</td>
+							</tr>
 						</table>
 							
+
+					</section>
+					
+					
+					<section id="generatedTables">
+						<h3>Number of Generated Clauses</h3>
+						<div class="row">
+                                                                                                                                                                                                                                                                                                                           
+							<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<th>Run</th>                                                                                                                                                                                                                                                                                                               
+								<th>Generated</th>                                                                                                                                                                                                                                                                                                         
+								<th>Generated vs Auto</th>                                                                                                                                                                                                                                                                                                 
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHRoundRobin</td>                                                                                                                                                                                                                                                                                                     
+								<td>1651.00</td>                                                                                                                                                                                                                                                                                                           
+								<td>-31346.46</td>                                                                                                                                                                                                                                                                                                         
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+								<td>1814.50</td>                                                                                                                                                                                                                                                                                                           
+								<td>-23891.08</td>                                                                                                                                                                                                                                                                                                         
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHNN</td>                                                                                                                                                                                                                                                                                                             
+								<td>1868.00</td>                                                                                                                                                                                                                                                                                                           
+								<td>-22696.30</td>                                                                                                                                                                                                                                                                                                         
+								</tr>
+								<tr>
+								<td>SLHConstCat</td>
+								<td>1913.50</td>
+								<td>-23089.69</td>
+								</tr>
+								<tr>
+								<td>SLHConstCatDistilled_gain5_</td>
+								<td>1955.00</td>
+								<td>-20843.68</td>
+								</tr>
+								<tr>
+								<td>SLHAuto</td>
+								<td>3930.00</td>
+								<td>0.00</td>
+								</tr>
+							</table>
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Generated</th>
+								<th>Generated vs Auto</th>
+								</tr>
+								<tr>
+								<td>MPTConstCat</td>
+								<td>195.00</td>
+								<td>-41430.33</td>
+								</tr>
+								<tr>
+								<td>MPTRoundRobinAllOnes</td>
+								<td>199.50</td>
+								<td>-40210.44</td>
+								</tr>
+								<tr>
+								<td>MPTNN</td>
+								<td>202.00</td>
+								<td>-39402.15</td>
+								</tr>
+								<tr>
+								<td>MPTRoundRobin</td>
+								<td>230.00</td>
+								<td>-37017.26</td>
+								</tr>
+								<tr>
+								<td>MPTAuto</td>
+								<td>254.00</td>
+								<td>0.00</td>
+								</tr>
+								<tr>
+								<td>MPTConstCatDistilled_gain5_</td>
+								<td>306.00</td>
+								<td>-40216.47</td>
+								</tr>
+							</table>
+						</div><br>
+
+						<table style="font-size:0.4em;">
+							<tr>
+							<th>Run</th>
+							<th>Generated</th>
+							<th>Generated vs Auto</th>
+							</tr>
+							<tr>
+							<td>VBTConstCatDistilled_gain5_</td>
+							<td>4752.00</td>
+							<td>1957.39</td>
+							</tr>
+							<tr>
+							<td>VBTRoundRobinAllOnes</td>
+							<td>4767.00</td>
+							<td>-2306.29</td>
+							</tr>
+							<tr>
+							<td>VBTConstCat</td>
+							<td>4805.00</td>
+							<td>-865.66</td>
+							</tr>
+							<tr>
+							<td>VBTNN</td>
+							<td>5317.00</td>
+							<td>668.75</td>
+							</tr>
+							<tr>
+							<td>VBTRoundRobin</td>
+							<td>6764.50</td>
+							<td>-1.01</td>
+							</tr>
+							<tr>
+							<td>VBTAuto</td>
+							<td>8783.00</td>
+							<td>0.00</td>
+							</tr>
+						</table>
+
+					</section>
+
+					<section id="proofClauseTables">
+						<h3>Proof Sizes</h3>
+						<div class="row">
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Proof Clauses</th>
+								<th>Proof Clauses vs Auto</th>
+								</tr>
+								<tr>
+								<td>SLHAuto</td>
+								<td>11.00</td>
+								<td>0.00</td>
+								</tr>
+								<tr>
+								<td>SLHRoundRobin</td>
+								<td>11.00</td>
+								<td>0.08</td>
+								</tr>
+								<tr>
+								<td>SLHConstCatDistilled_gain5_</td>
+								<td>11.00</td>
+								<td>0.47</td>
+								</tr>
+								<tr>
+								<td>SLHRoundRobinAllOnes</td>
+								<td>11.00</td>
+								<td>0.56</td>
+								</tr>
+								<tr>
+								<td>SLHNN</td>
+								<td>11.00</td>
+								<td>0.60</td>
+								</tr>
+								<tr>
+								<td>SLHConstCat</td>
+								<td>11.00</td>
+								<td>0.75</td>
+								</tr>
+							</table>
+
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Proof Clauses</th>
+								<th>Proof Clauses vs Auto</th>
+								</tr>
+								<tr>
+								<td>MPTAuto</td>
+								<td>23.00</td>
+								<td>0.00</td>
+								</tr>
+								<tr>
+								<td>MPTConstCat</td>
+								<td>26.00</td>
+								<td>0.54</td>
+								</tr>
+								<tr>
+								<td>MPTNN</td>
+								<td>26.00</td>
+								<td>0.64</td>
+								</tr>
+								<tr>
+								<td>MPTRoundRobinAllOnes</td>
+								<td>26.00</td>
+								<td>0.68</td>
+								</tr>
+								<tr>
+								<td>MPTRoundRobin</td>
+								<td>26.00</td>
+								<td>0.73</td>
+								</tr>
+								<tr>
+								<td>MPTConstCatDistilled_gain5_</td>
+								<td>26.00</td>
+								<td>0.73</td>
+								</tr>
+							</table>
+						</div><br>
+
+						<table style="font-size:0.4em;">
+							<tr>
+							<th>Run</th>
+							<th>Proof Clauses</th>
+							<th>Proof Clauses vs Auto</th>
+							</tr>
+							<tr>
+							<td>VBTConstCatDistilled_gain5_</td>
+							<td>12.00</td>
+							<td>-0.22</td>
+							</tr>
+							<tr>
+							<td>VBTNN</td>
+							<td>12.00</td>
+							<td>-0.19</td>
+							</tr>
+							<tr>
+							<td>VBTConstCat</td>
+							<td>12.00</td>
+							<td>-0.12</td>
+							</tr>
+							<tr>
+							<td>VBTRoundRobinAllOnes</td>
+							<td>12.00</td>
+							<td>-0.10</td>
+							</tr>
+							<tr>
+							<td>VBTAuto</td>
+							<td>13.00</td>
+							<td>0.00</td>
+							</tr>
+							<tr>
+							<td>VBTRoundRobin</td>
+							<td>13.00</td>
+							<td>0.30</td>
+							</tr>
+						</table>
+							
+					</section>
+
+					<section id="efficiencyTables">
+						<h6 class="smallerfont">Efficiency (proof clauses / processed clauses)</h6>
+						<div class="row">
+							<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<th>Run</th>                                                                                                                                                                                                                                                                                                               
+								<th>Efficiency</th>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHRoundRobin</td>                                                                                                                                                                                                                                                                                                     
+								<td>0.018110777</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHConstCatDistilled_gain5_</td>                                                                                                                                                                                                                                                                                       
+								<td>0.017877117</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+								<td>0.017021277</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHNN</td>                                                                                                                                                                                                                                                                                                             
+								<td>0.016658505</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHConstCat</td>                                                                                                                                                                                                                                                                                                       
+								<td>0.016632017</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>SLHAuto</td>                                                                                                                                                                                                                                                                                                           
+								<td>0.009582864</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+							</table> 
+
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Efficiency</th>
+								</tr>
+								<tr>
+								<td>MPTNN</td>
+								<td>0.280373832</td>
+								</tr>
+								<tr>
+								<td>MPTRoundRobinAllOnes</td>
+								<td>0.277027027</td>
+								</tr>
+								<tr>
+								<td>MPTConstCat</td>
+								<td>0.269909502</td>
+								</tr>
+								<tr>
+								<td>MPTRoundRobin</td>
+								<td>0.237373737</td>
+								</tr>
+								<tr>
+								<td>MPTConstCatDistilled_gain5_</td>
+								<td>0.226415094</td>
+								</tr>
+								<tr>
+								<td>MPTAuto</td>
+								<td>0.192660550</td>
+								</tr>
+							</table>
+
+						</div><br>
+
+						<table style="font-size:0.4em;">
+							<tr>
+							<th>Run</th>
+							<th>Efficiency</th>
+							</tr>
+							<tr>
+							<td>VBTRoundRobin</td>
+							<td>0.011312217</td>
+							</tr>
+							<tr>
+							<td>VBTRoundRobinAllOnes</td>
+							<td>0.011198208</td>
+							</tr>
+							<tr>
+							<td>VBTConstCatDistilled_gain5_</td>
+							<td>0.010981474</td>
+							</tr>
+							<tr>
+							<td>VBTConstCat</td>
+							<td>0.010810811</td>
+							</tr>
+							<tr>
+							<td>VBTNN</td>
+							<td>0.009973404</td>
+							</tr>
+							<tr>
+							<td>VBTAuto</td>
+							<td>0.009130982</td>
+							</tr>
+						</table>
+
+
 					</section>
 
 
@@ -580,17 +1124,21 @@ Example Heuristic in E:
 						<h3>Summary of Results</h3>
 						<ul class="smallerfont">
 							<li class="fragment">The biggest impact on problems solved was the "strategy aggregation" done to determine the set of actions (CEFs)</li>
-							<li class="fragment">Distilled ConstCat outperforms ConstCat and NN on SLH and VBT, but not MPT</li>
+							<li class="fragment">Distilled ConstCat outperforms ConstCat and NN on SLH and VBT, but not MPTPTP2078</li>
 							<li class="fragment">NN failed to outperform ConstCat (the state is not very helpful)</li>
-							<li class="fragment"></li>
+							<li class="fragment">Learning was most effective for MPTPTP2078
+								<ul>
+									<li class="fragment">Perhaps because proofs are found in fewer given clause selections</li>
+								</ul>
+							</li>
 						</ul>
 
 					</section>
 				</section>
 
-				<section id="analysisPlots">
+				<!-- <section id="analysisPlots">
 					<h3>Analysis / Plots</h3>
-				</section>
+				</section> -->
 
 
 				<section>
