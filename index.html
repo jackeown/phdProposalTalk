@@ -1,0 +1,653 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
+
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<style>
+			.reveal i{
+				font-family: 'FontAwesome';
+				font-style: normal;
+			}
+			.red{
+				color:rgb(255, 150, 150);
+			}
+			.green{
+				color:rgb(150, 255, 150);
+			}
+			.yellow{
+				color:rgb(255, 255, 123);
+			}
+			.row{
+				display:flex;
+				flex-direction:row;
+				justify-content: space-around;
+			}
+			.box{
+				border:1px solid white;
+				padding:15px;
+				margin:5px;
+				font-size:24pt;
+			}
+			.emph{
+				font-style:italic;
+			}
+			.ul{
+				text-decoration: underline;
+			}
+
+			.small{
+				scale:0.9;
+			}
+
+			.smaller{
+				scale:0.8;
+			}
+
+			.smallest{
+				scale:0.6;
+			}
+
+			textarea::selection{
+				color:black;
+			}
+
+			.smallerfont{
+				font-size:0.8em;
+			}
+
+			th{
+				color:rgb(150, 255, 150);
+			}
+
+			/* first child of tr */
+			tr > *:first-child{
+				color:rgb(150, 255, 150);
+			}
+
+		</style>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h3>Ph.D. Proposal Talk</h3>
+					<hr>
+					<h4>Jack McKeown</h4>
+					<h6>Advised by Geoff Sutcliffe</h6>
+				</section>
+
+				<section id="outline">
+					<h3>Outline</h3>
+					<div class="box">
+						<ol>
+							<li class="fragment">First-Order Logic & CNF</li>
+							<li class="fragment">Saturation-based ATP</li>
+							<li class="fragment">Given Clause Selection</li>
+							<li class="fragment">E heuristics</li>
+							<li class="fragment">
+								Relevant Previous Work
+								<ul>
+									<li>Enigma-NG</li>
+									<li>TRAIL</li>
+									<li>DeepMind Hindsight Experience Replay</li>
+								</ul>
+							</li>
+							
+							<li class="fragment">Reinforcement Learning</li>
+							<li class="fragment">Proximal Policy Optimization</li>
+							<li class="fragment">My RL Setup for Given Clause Selection</li>
+							<li class="fragment">Results / Analysis / Plots</li>
+							<li class="fragment">Possible Directions for Future Research</li>
+						</ol>
+					</div>
+				</section>
+
+
+				<section id="firstOrderLogic">
+					<h3>First Order Logic</h3>
+					<hr>
+					<ul class="small">
+						<li class="fragment"><span class="green">Boolean constants</span> (from propositional logic)</li>
+						<li class="fragment"><span class="green">Logical connectives</span> (from propositional logic)</li>
+						<li class="fragment">A <span class="green">domain</span> of non-booleans</li>
+						<li class="fragment">Existentially ($\exists$) and universally ($\forall$) quantified <span class="green">variables</span> over that domain.</li>
+						<li class="fragment"><span class="green">Functions</span> (that map domain elements to other domain elements)</li>
+						<li class="fragment"><span class="green">Predicates</span> (truth valued functions)</li>
+					</ul>
+				</section>
+
+				<section id="clauseNormalForm">
+					<h3>Clause Normal Form</h3>
+					<div class="box">
+						This first order statement: 
+						<span class="red">
+							$$ \forall X \exists Y : p(X,f(Y)) \; | \; (q(X)\wedge q(Y))$$
+						</span>
+						<span class="fragment">
+							becomes
+							<span class="green">
+								$$ \underbrace{p(X, f(sk(X))) \; | \; q(X)}_{clause} \;\; \bigwedge \;\; \underbrace{p(X, f(sk(X))) \; | \;q(sk(X))}_{clause} $$
+							</span>
+							in Conjunctive/Clause Normal Form (CNF).<br>
+							(In CNF all variables are universally quantified.)
+						</span>
+					</div>
+				</section>
+
+				<section id="saturation">
+					<h3>Saturation</h3>
+					<ul>
+						<li class="fragment"><span class="green">Saturation:</span> Computing the closure of a set of formulae with respect to a set of inference rules</li>
+						<li class="fragment">Typically directed towards deriving the empty clause as a proof by contradiction</li>
+						<li class="fragment smaller green">(Intuition: the empty clause must be false because if the empty clause were true, then every clause would need to be as well: <br>$empty | false \equiv false$)</li>
+					</ul>
+				</section>
+
+
+				<section id="saturationBasedTheoremProving">
+					<h3>Saturation-based Theorem Proving</h3>
+					<div class="box">
+						Prove conjecture, $C$, by showing that the following clause set is contradictory (unsatisfiable) via saturation:<br>
+						<span class="green">CNF(axioms $\cup$ $\{\sim C\}$)</span>
+					</div>
+
+					<div class="box">
+						<ol>
+							<li class="fragment">
+								<u><b>Processed Set:</b></u> All possible resolutions have already been formed within this group and added to the Unprocessed set. (This set remains saturated)
+							</li><br>
+							<li class="fragment">
+								<u><b>Unprocessed Set:</b></u> Inferences from new "given-clauses" go here. This set grows much faster.
+							</li>
+						</ol>
+
+					</div>
+				</section>
+
+				<section id="givenClauseSelection">
+					<h3>Given Clause Selection</h3>
+					<img src="images/processedAndUnprocessedSets.svg" style="background:white">
+					<ul>
+						<li style="font-size: 0.7em;">Improving given clause selection is a core goal of ATP research</li>
+					</ul>
+				</section>
+
+				<section id="eQueues">
+					<h4>Given Clause Selection Queues in E</h4>
+					<style>
+						.Equeue{
+							display: flex;
+							padding: 0.3em;
+							width:   100%;
+							align-items: center;
+						}
+						.Eclause{
+							width:  0.8em;
+							height: 0.8em;
+							margin: 0.1em 0.2em;
+							align-items: center;
+							display: flex;
+							justify-content: center;
+						}
+					</style>
+					<div class="Equeue box">
+
+						<div class="Eclause"> $\leftarrow$</div>
+						<div class="box Eclause" style="background-color:rgb(150, 255, 150)"></div>
+						<div class="box Eclause" style="background-color:rgb(255, 150, 150)"></div>
+						<div class="box Eclause" style="background-color:rgb(255, 255, 123)"></div>
+						<div class="box Eclause" style="background-color:rgb(150, 150, 255)"></div>
+						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause">$...$</div>
+					</div>
+
+					<div class="Equeue box">
+						<div class="Eclause"> $\leftarrow$</div>
+						<div class="box Eclause" style="background-color:rgb(150, 255, 150)"></div>
+						<div class="box Eclause" style="background-color:rgb(255, 255, 123)"></div>
+						<div class="box Eclause" style="background-color:rgb(255, 150, 150)"></div>
+						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
+						<div class="box Eclause" style="background-color:rgb(150, 150, 255)"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause">$...$</div>
+					</div>
+
+					<div class="Equeue box">
+						<div class="Eclause"> $\leftarrow$</div>
+						<div class="box Eclause" style="background-color:rgb(255, 255, 123)"></div>
+						<div class="box Eclause" style="background-color:rgb(150, 150, 255)"></div>
+						<div class="box Eclause" style="background-color:rgb(150, 255, 150)"></div>
+						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
+						<div class="box Eclause" style="background-color:rgb(255, 150, 150)"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause">$...$</div>
+					</div>
+
+					$\vdots$
+
+
+					<div class="Equeue box">
+						<div class="Eclause"> $\leftarrow$</div>
+						<div class="box Eclause" style="background-color:rgb(255, 150, 150)"></div>
+						<div class="box Eclause" style="background-color:rgb(255, 255, 123)"></div>
+						<div class="box Eclause" style="background-color:rgb(150, 150, 255)"></div>
+						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
+						<div class="box Eclause" style="background-color:rgb(150, 255, 150)"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+						<div class="Eclause"></div>
+
+						<div class="Eclause">$...$</div>
+					</div>
+
+					<textarea cols="50" rows="6" style="overflow: hidden;">
+Example Heuristic in E:
+
+10 * Clauseweight(PreferGoals,1,1,1),
+10 * Clauseweight(PreferNonGoals,1,1,1),
+10 * Clauseweight(ByHornDist,1,1,1),
+1 * FIFOWeight(ConstPrio)
+					</textarea>
+
+				</section>
+
+
+
+				<section id="gcsSupervisedLearning">
+					<h3>GCS as Supervised Learning</h3>
+					<ul class="smaller">
+						<li class="fragment">A new CEF to be learned: <span class="green">$f$</span></li>
+						<li class="fragment">Clause representation is important and linked with model architecture</li>
+						<li class="fragment"><span class="green">$f$</span> 
+							is trained from successful proofs:
+							<ul>
+								<li class="fragment"><span class="green">positive examples</span> are selections of clauses that ended up in the final proof.</li>
+								<li class="fragment"><span class="red">negative examples</span> are all other given clause selections</li>
+							</ul>
+						</li>
+						<div class="box fragment" style="padding-left:2em;margin-left:-2em;">
+							<h4>Drawbacks</h4>
+							<li class="fragment red">Usually relies on consistent signature</li>
+							<li class="fragment red">Highly unbalanced training data</li>
+						</div>
+						<!-- <li>My master's thesis was all about this stuff and I didn't have much success</li> -->
+					</ul>
+				</section>
+
+
+				<section id="enigma">
+					<h4>Previous Work: <span class="green">ENIGMA</span></h4>
+					<div class="row">
+						<ul class="smallerfont">
+							<li>Efficient LearNing-based Inference Guiding Machine</li>
+							<li class="fragment">Many features counting occurrences of various tree walks</li>
+							<li class="fragment">Feature hashing</li>
+							<li class="fragment">CEF score given by "in-proofness" classifier probability</li>
+							<li class="fragment">Negated Conjecture Clause Features</li>
+							<li class="fragment"><span class="green">Recursive</span> Neural Network</li>
+							<li class="fragment">
+								<span class="fragment">XGBoost</span>
+								<span class="fragment"><span class="green">&gt;</span> LibLinear</span>
+								<span class="fragment"><span class="green">&gt;</span> NN</span>
+							</li>
+						</ul>
+						<div class="smallerfont">
+							<img src="images/clauseGraph.png" style="height:300px">
+							<span class="green">$p(X,f(sk(X),g(b),g(Y)))$</span>
+						</div>
+					</div>
+				</section>
+
+				<section id="trail">
+					<section>
+						<h4>Previous Work: <span class="green">TRAIL</span></h4>
+						<div class="row"></div>
+						<ul class="smallerfont">
+							<li class="fragment">Trial Reasoner for AI that Learns</li>
+							<li class="fragment">Efficient vectorization as in ENIGMA</li>
+							<li class="fragment">Full processed set context</li>
+							<li class="fragment">First saturation based RL method</li>
+							<li class="fragment">Each context clause votes on its "favorite" unprocessed clause</li>
+							<li class="fragment">Didn't beat E, but substantially improved base prover performance (Beagle)</li>
+						</ul>
+					</section>
+
+					<section>
+						<h4>Previous Work: <span class="green">TRAIL</span> (architecture)</h4>
+						<img class="fragment" src="images/trail.png">
+					</section>
+				</section>
+
+
+				<section id="hindsightExperienceReplay">
+					<h4>Previous Work: <span class="green">Hindsight Experience Replay</span></h4>
+					<ul class="smallerfont">
+						<li class="fragment">Hindsight Experience Replay (DeepMind - 2017)</li>
+						<li class="fragment">Solves problem of limited/discontinuous training data using "hindsight goals"</li>
+						<li class="fragment">Implements a CEF and is another "in-proofness" classifier</li>
+						<li class="fragment">Transformer network with graph laplacian positional embeddings</li>
+					</ul>
+				</section>
+
+
+				<section id="ReinforcementLearning">
+					<section>
+						<h3>RL / Policy Gradients</h3>
+						<ul>
+							<li class="fragment">States, Actions and Rewards</li>
+							<li class="fragment" style="line-height: 1.8em;">Policy:
+								<span class="green fragment box">$\pi(s) = a$</span>
+								<span class="green fragment box">$\sum_a \pi(s,a) = 1$</span>
+							</li>
+							<li class="fragment">Goal: <span class="green">Maximize expected future discounted
+									rewards</span></li>
+							<li class="fragment" style="line-height: 2.1em;">Policy Gradient Loss:
+								$\displaystyle\frac{1}{T}\sum_{t=1}^T [$
+								<span class="green fragment"
+									style="padding:1em 0em;font-size:0.8em;">$-\log{(\pi(s_t,a_t))}$</span>
+								<span class="fragment">
+									$\cdot $
+									<span class="blue">$R_t$</span>
+								</span>
+								$]$
+							</li>
+	
+	
+							<li class="fragment" style="line-height: 2.1em;">Reducing Variance:
+								$\displaystyle\frac{1}{T}\sum_{t=1}^T [$
+								<span class="green fragment"
+									style="padding:1em 0em;font-size:0.8em;">$-\log{(\pi(s_t,a_t))}$</span>
+								<span class="fragment">
+									$\cdot $
+									<span class="red">$A_t$</span>
+								</span>
+								$]$
+							</li>
+							<li class="fragment">
+								<span class="red">
+									$A_t$
+								</span>
+								$=$
+								<span class="blue">$R_t$</span> $- V(s_t)$
+							</li>
+						</ul>
+	
+						<aside class="notes">
+							+ taking actions from states to obtain rewards.
+							+ PG Loss is negative log likelihood of actions times future rewards.
+							+ Subtracting baseline can help reduce the PG variance without changing the expected value.
+							+ This is called Actor-critic where the actor is the policy and the critic is the learned baseline.
+						</aside>
+					</section>
+	
+					<section>
+						<h3>Proximal Policy Optimization (PPO)</h3>
+						<ul style="font-size:0.7em;">
+							<li class="fragment">Simpler successor to Trust Region Policy Optimization (TRPO)</li>
+							<li class="fragment">Main Idea: <span class="green">Learn from the same data multiple times in
+									mini-batches <br>without drastically affecting the current policy.</span></li>
+							<span class="fragment">
+								<li>A special loss limits the gradient so that 
+									<span class="green">$0.8\pi_{old}(s,a) \leq \pi(s,a) \leq 1.2\pi_{old}(s,a)$</span>
+								</li>
+								<ul>
+									<li>$r_t(\theta) = \frac{\pi_{\theta}(a_t | s_t)}{\pi_{\theta_{old}}(a_t |
+										s_t)}$</li>
+									<li>$L_{actor}(\theta) = \displaystyle\frac{1}{T}\sum_{t=1}^T [min($ 
+										<span class="green">$r_t(\theta)A_t$</span> $, $ 
+										<span class="red">$clip(r_t(\theta),1-\epsilon, 1+\epsilon)A_t$</span> $)]$
+									</li>
+								</ul>
+							</span>
+						</ul>
+						<aside class="notes">
+							+ PPO makes multiple mini-batch gradient steps from a batch of episodes.
+							+ This has potential to be problematic if the policy changes too much as the data is no longer representative.
+							+ PPO limits the magnitude of the overall policy change.
+						</aside>
+					</section>
+	
+				</section>
+
+				<section>
+					<h3>RL in E</h3>
+					<ul class="small">
+						<li>States:
+							<span class="green">
+								$($
+								<span class="fragment">$t$</span>,
+								<span class="fragment">$|P|$</span>,
+								<span class="fragment">$|U|$</span>,
+								<span class="fragment">$W(P)$</span>,
+								<span class="fragment">$W(U)$</span>
+								$)$
+							</span>
+						</li>
+						<li>Actions: <span class="green fragment">choice from a fixed set of
+								CEFs</span></li>
+						<li>Rewards: <span class="green fragment">given for selection of proof clauses</span></li>
+						<li class="fragment"><hr><span class="yellow">Note:</span> the rewards are calculated retrospectively after the end of a proof attempt</li>
+					</ul>
+
+				</section>
+
+
+
+
+				<section id="experimentalSetup">
+					<section>
+						<h3>Experiment Architecture</h3>
+						<img src="images/architecture.svg" style="background:whitesmoke">
+					</section>
+
+					<section>
+						<h3>CEF Selection</h3>
+						<ul>
+							<li class="fragment smallerfont">If CEFs are actions, which actions should be possible?</li>
+							<li class="fragment smallerfont">For each dataset, all CEFs ever used by --auto on those problems</li>
+							<li class="fragment smallerfont">~40 CEFs for each dataset</li>
+						</ul>
+					</section>
+	
+					<section>
+						<h3>Approaches Compared</h3>
+						<ul class="smallerfont">
+							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
+								<span class="green" style="text-decoration:underline">--auto</span>:
+								<span class="smallfont">E's mode that analyzes a problem to choose a fixed
+									heuristic</span>
+							</li>
+							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
+								<span class="green" style="text-decoration:underline">Round Robin</span>:
+								<span class="smallfont">
+									A round-robin schedule over the chosen CEFs
+									<br><span class="red">(A normal E heuristic with all ones for weights)</span>
+								</span>
+							</li>
+							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
+								<span class="green" style="text-decoration:underline">Learned Categorical</span>:
+								<span class="smallfont">
+									Randomly samples from a learned categorical distribution
+									<br><span class="red">(Ignores the RL state entirely)</span>
+								</span>
+							</li>
+							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
+								<span class="green" style="text-decoration:underline">Distilled Categorical</span>:
+								<span class="smallfont">
+									The previous policy reduced into a standard E heuristic.
+									<br><span class="red">(Removes the randomness and named pipe overhead)</span>
+								</span>
+							</li>
+							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
+								<span class="green" style="text-decoration:underline">Neural Network</span>:
+								<span class="smallfont">A shallow neural network policy</span>
+							</li>
+						</ul>
+					</section>
+	
+					<section>
+						<h3>Experiment Details</h3>
+						<ul class="smallerfont">
+							<li class="fragment">CPU Limit for proof attempts: <span class="green">60 seconds</span></li>
+							<li class="fragment"><span class="green">75 seconds</span> were given when testing the RL models
+								to account for latency caused by the named pipe communication</li>
+						</ul>
+					</section>
+				</section>
+
+				<section id="summarizedResults">
+					<section id="slhTable">
+						<h3>SLH Result Table</h3>
+
+						<table style="font-size:0.5em;">
+							<tr><th>Run</th><th>Solved</th><th>Solved vs Auto</th><th>Processed</th><th>Processed vs Auto</th><th>Generated</th><th>Proof Clauses</th><th>Efficiency</th><th></th></tr>
+							<tr><td>SLHRoundRobin</td><td>748.6</td><td>+ 98.6 , - 29.2</td><td>1492.59</td><td>-2268.00</td><td>4796.21</td><td>11.51</td><td>0.024369628</td></tr>
+							<tr><td>SLHConstCatDistilled_gain5_</td><td>745.6</td><td>+100.0 , - 33.6</td><td>1636.00</td><td>-2113.97</td><td>5518.08</td><td>11.67</td><td>0.023222676</td></tr>
+							<tr><td>SLHNN</td><td>735.2</td><td>+ 94.6 , - 38.6</td><td>1671.66</td><td>-2066.91</td><td>5757.04</td><td>11.76</td><td>0.024004336</td></tr>
+							<tr><td>SLHConstCat</td><td>735.2</td><td>+ 93.8 , - 37.8</td><td>1660.98</td><td>-2015.63</td><td>5690.13</td><td>11.77</td><td>0.024753276</td></tr>
+							<tr><td>SLHRoundRobinAllOnes</td><td>728.4</td><td>+ 91.4 , - 42.2</td><td>1562.64</td><td>-2009.59</td><td>5617.02</td><td>11.77</td><td>0.025121361</td></tr>
+							<tr><td>SLHAuto</td><td>679.2</td><td>+  0.0 , -  0.0</td><td>1869.95</td><td>0.00</td><td>10963.13</td><td>11.10</td><td>0.016930621</td></tr>
+						</table>
+					</section>
+					
+					
+					<section id="vbtTable">
+						<h3>VBT Result Table</h3>
+						<table style="font-size:0.5em;">
+							<tr><th>Run</th><th>Solved</th><th>Solved vs Auto</th><th>Processed</th><th>Processed vs Auto</th><th>Generated</th><th>Proof Clauses</th><th>Efficiency</th><th></th></tr>
+							<tr><td>VBTConstCatDistilled_gain5_</td><td>609.2</td><td>+ 94.8 , - 13.0</td><td>2241.31</td><td>-650.90</td><td>31921.01</td><td>12.41</td><td>0.015359553</td></tr>
+							<tr><td>VBTConstCat</td><td>583.2</td><td>+ 75.8 , - 20.0</td><td>2061.25</td><td>-623.66</td><td>32983.52</td><td>12.67</td><td>0.016450104</td></tr>
+							<tr><td>VBTRoundRobin</td><td>568.2</td><td>+ 53.8 , - 13.0</td><td>1928.93</td><td>-412.63</td><td>34709.00</td><td>12.94</td><td>0.015339280</td></tr>
+							<tr><td>VBTNN</td><td>560.8</td><td>+ 57.0 , - 23.6</td><td>1854.33</td><td>-558.98</td><td>34194.56</td><td>12.56</td><td>0.015525148</td></tr>
+							<tr><td>VBTRoundRobinAllOnes</td><td>540.2</td><td>+ 43.0 , - 30.2</td><td>1643.44</td><td>-582.00</td><td>33291.75</td><td>12.73</td><td>0.016816789</td></tr>
+							<tr><td>VBTAuto</td><td>527.4</td><td>+  0.0 , -  0.0</td><td>1727.11</td><td>0.00</td><td>35068.73</td><td>12.59</td><td>0.014308966</td></tr>
+							</table>
+							
+					</section>
+					
+					
+					<section id="mptTable">
+						<h3>MPTPTP2078 Result Table</h3>
+						<table style="font-size:0.5em;">
+							<tr><th>Run</th><th>Solved</th><th>Solved vs Auto</th><th>Processed</th><th>Processed vs Auto</th><th>Generated</th><th>Proof Clauses</th><th>Efficiency</th><th></th></tr>
+							<tr><td>MPTNN</td><td>246.4</td><td>+ 25.0 , -  8.8</td><td>443.56</td><td>-2413.80</td><td>833.77</td><td>25.56</td><td>0.295987830</td></tr>
+							<tr><td>MPTConstCat</td><td>245.8</td><td>+ 25.0 , -  9.4</td><td>456.53</td><td>-2388.32</td><td>822.91</td><td>25.55</td><td>0.295591068</td></tr>
+							<tr><td>MPTConstCatDistilled_gain5_</td><td>245.2</td><td>+ 24.8 , -  9.8</td><td>450.32</td><td>-2199.28</td><td>1090.46</td><td>25.71</td><td>0.264860238</td></tr>
+							<tr><td>MPTRoundRobinAllOnes</td><td>243.8</td><td>+ 23.0 , -  9.4</td><td>416.78</td><td>-2405.30</td><td>843.93</td><td>25.63</td><td>0.295204483</td></tr>
+							<tr><td>MPTRoundRobin</td><td>242.0</td><td>+ 22.6 , - 10.8</td><td>555.46</td><td>-2223.53</td><td>1045.81</td><td>25.71</td><td>0.275407996</td></tr>
+							<tr><td>MPTAuto</td><td>230.2</td><td>+  0.0 , -  0.0</td><td>861.47</td><td>0.00</td><td>2745.62</td><td>23.98</td><td>0.232237375</td></tr>
+						</table>
+							
+					</section>
+
+
+					<section id="resultSummary">
+						<h3>Summary of Results</h3>
+						<ul class="smallerfont">
+							<li class="fragment">The biggest impact on problems solved was the "strategy aggregation" done to determine the set of actions (CEFs)</li>
+							<li class="fragment">Distilled ConstCat outperforms ConstCat and NN on SLH and VBT, but not MPT</li>
+							<li class="fragment">NN failed to outperform ConstCat (the state is not very helpful)</li>
+							<li class="fragment"></li>
+						</ul>
+
+					</section>
+				</section>
+
+				<section id="analysisPlots">
+					<h3>Analysis / Plots</h3>
+				</section>
+
+
+				<section>
+					<h3>Future Research</h3>
+					<ul>
+						<li class="fragment">
+							Explore alternate definitions of states and actions
+							<ul>
+								<li class="fragment">Augment state with a history of past states and actions (frame stacking)</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+
+				<section id="thanks">
+					<h3>Thanks for listening</h3>
+					<em class="green">Questions?</em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<em class="green">Suggestions?</em><br>
+				</section>
+
+			</div>
+		</div>
+
+
+
+
+		<script src="js/reveal.js"></script>
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				hash: true,
+				math: {
+					mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+					config: 'TeX-AMS_HTML-full', // See http://docs.mathjax.org/en/latest/config-files.html
+					// pass other options into `MathJax.Hub.Config()`
+					TeX: { Macros: { RR: "{\\bf R}" } }
+				},
+				slideNumber: true,
+
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/highlight/highlight.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/math/math.js', async: true }
+				]
+			});
+
+
+			document.addEventListener("keypress", function(e){
+				if (e.key == 'u'){
+					document.querySelector("#outline").classList.add("floatingOutline")
+				}
+			})
+
+		</script>
+	</body>
+</html>
