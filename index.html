@@ -105,18 +105,9 @@
 					<h3>Outline</h3>
 					<div class="box">
 						<ol>
-							<li class="fragment">First-Order Logic & CNF</li>
-							<li class="fragment">Saturation-based ATP</li>
-							<li class="fragment">Given Clause Selection</li>
-							<li class="fragment">E heuristics</li>
-							<li class="fragment">
-								Relevant Previous Work
-								<ul>
-									<li>Enigma-NG</li>
-									<li>TRAIL</li>
-									<li>DeepMind Hindsight Experience Replay</li>
-								</ul>
-							</li>
+							<li class="fragment">First-Order Logic, CNF, Saturation-based ATP</li>
+							<li class="fragment">Given Clause Selection & E heuristics</li>
+							<li class="fragment">Previous Work</li>
 							
 							<li class="fragment">Reinforcement Learning</li>
 							<li class="fragment">Proximal Policy Optimization</li>
@@ -134,10 +125,9 @@
 					<ul class="small">
 						<li class="fragment"><span class="green">Boolean constants</span> (from propositional logic)</li>
 						<li class="fragment"><span class="green">Logical connectives</span> (from propositional logic)</li>
-						<li class="fragment">A <span class="green">domain</span> of non-booleans</li>
-						<li class="fragment">Existentially ($\exists$) and universally ($\forall$) quantified <span class="green">variables</span> over that domain.</li>
-						<li class="fragment"><span class="green">Functions</span> (that map domain elements to other domain elements)</li>
-						<li class="fragment"><span class="green">Predicates</span> (truth valued functions)</li>
+						<li class="fragment"><span class="green">Variables</span></li>
+						<li class="fragment"><span class="green">Functions</span> (that produce non-booleans)</li>
+						<li class="fragment"><span class="green">Predicates</span> (that produce booleans)</li>
 					</ul>
 				</section>
 
@@ -161,20 +151,20 @@
 
 				<section id="saturation">
 					<h3>Saturation</h3>
-					<ul>
+					<ul class="smallerfont">
 						<li class="fragment"><span class="green">Saturation:</span> Computing the closure of a set of formulae with respect to a set of inference rules</li>
-						<li class="fragment">Typically directed towards deriving the empty clause as a proof by contradiction</li>
-						<li class="fragment smaller green">(Intuition: the empty clause must be false because if the empty clause were true, then every clause would need to be as well: <br>$empty | false \equiv false$)</li>
+						<li class="fragment">
+							Prove conjecture, $C$, by showing that <br>
+							&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">CNF(axioms $\cup$ $\{\sim C\}$)</span><br> is unsatisfiable
+						</li>
+						<li class="fragment">Show unsatisfiability by inferring $false$ via saturation</li>
+						<!-- <li class="fragment smaller green">(Intuition: the empty clause must be false because if the empty clause were true, then every clause would need to be as well: <br>$empty | false \equiv false$)</li> -->
 					</ul>
 				</section>
 
 
-				<section id="saturationBasedTheoremProving">
+				<!-- <section id="saturationBasedTheoremProving">
 					<h3>Saturation-based Theorem Proving</h3>
-					<div class="box">
-						Prove conjecture, $C$, by showing that the following clause set is contradictory (unsatisfiable) via saturation:<br>
-						<span class="green">CNF(axioms $\cup$ $\{\sim C\}$)</span>
-					</div>
 
 					<div class="box">
 						<ol>
@@ -185,15 +175,90 @@
 								<u><b>Unprocessed Set:</b></u> Inferences from new "given-clauses" go here. This set grows much faster.
 							</li>
 						</ol>
-
 					</div>
-				</section>
+				</section> -->
 
 				<section id="givenClauseSelection">
 					<h3>Given Clause Selection</h3>
-					<img src="images/processedAndUnprocessedSets.svg" style="background:white">
+					<img src="images/processedAndUnprocessedSets3.svg" style="background:white">
 					<ul>
 						<li style="font-size: 0.7em;">Improving given clause selection is a core goal of ATP research</li>
+					</ul>
+				</section>
+
+
+				<section id="gcsSupervisedLearning">
+					<h3>GCS as Supervised Learning</h3>
+					<ul class="smaller">
+						<li class="fragment">Learn clause evaluation function (CEF): <span class="green">$f_\theta(clause) \rightarrow score$</span></li>
+						<li class="fragment">Clause representation is linked with model architecture</li>
+						<li class="fragment"><span class="green">$f$</span> 
+							is trained from successful proofs:
+							<ul>
+								<li class="fragment"><span class="green">positive examples</span> are selections of clauses that ended up in the final proof.</li>
+								<li class="fragment"><span class="red">negative examples</span> are all other given clause selections</li>
+							</ul>
+						</li>
+						<div class="box fragment" style="padding-left:2em;margin-left:-2em;">
+							<h4 style="margin-bottom:0px">Drawbacks</h4>
+							<li class="fragment red">Usually relies on consistent signature</li>
+							<li class="fragment red">Highly unbalanced training data</li>
+						</div>
+					</ul>
+				</section>
+
+
+				<section id="enigma">
+					<h4>Previous Work: <span class="green">ENIGMA</span></h4>
+					<div class="row">
+						<ul class="smallerfont">
+							<li>Efficient LearNing-based Inference Guiding Machine</li>
+							<li class="fragment">Many features counting occurrences of various tree walks</li>
+							<li class="fragment">Feature hashing</li>
+							<li class="fragment">CEF score given by "in-proofness" classifier probability</li>
+							<li class="fragment">Negated Conjecture Clause Features</li>
+							<li class="fragment"><span class="green">Recursive</span> Neural Network</li>
+							<li class="fragment">
+								<span class="fragment">XGBoost</span>
+								<span class="fragment"><span class="green">&gt;</span> LibLinear</span>
+								<span class="fragment"><span class="green">&gt;</span> NN</span>
+							</li>
+						</ul>
+						<div class="smallerfont">
+							<img src="images/clauseGraph.png" style="height:300px">
+							<span class="green">$p(X,f(sk(X),g(b),g(Y)))$</span>
+						</div>
+					</div>
+				</section>
+
+				<section id="trail">
+					<section>
+						<h4>Previous Work: <span class="green">TRAIL</span></h4>
+						<div class="row"></div>
+						<ul class="smallerfont">
+							<li class="fragment">Trial Reasoner for AI that Learns</li>
+							<li class="fragment">Efficient vectorization as in ENIGMA</li>
+							<li class="fragment">Full processed set context</li>
+							<li class="fragment">First saturation based RL method</li>
+							<li class="fragment">Each context clause votes on its "favorite" unprocessed clause</li>
+							<li class="fragment">Didn't beat E, but substantially improved base prover performance (Beagle)</li>
+						</ul>
+					</section>
+
+					<section>
+						<h4>Previous Work: <span class="green">TRAIL</span> (architecture)</h4>
+						<img class="fragment" src="images/trail.png">
+					</section>
+				</section>
+
+
+				<section id="hindsightExperienceReplay">
+					<h4>Previous Work: <span class="green">Hindsight Experience Replay</span></h4>
+					<ul class="smallerfont">
+						<li class="fragment">Hindsight Experience Replay (DeepMind - 2017)</li>
+						<li class="fragment">Solves problem of limited/discontinuous training data using "hindsight goals"</li>
+						<li class="fragment">Implements a CEF and is another "in-proofness" classifier</li>
+						<li class="fragment">Transformer network with graph laplacian positional embeddings</li>
 					</ul>
 				</section>
 
@@ -289,86 +354,8 @@ Example Heuristic in E:
 1 * FIFOWeight(ConstPrio)
 					</textarea>
 
+
 				</section>
-
-
-
-				<section id="gcsSupervisedLearning">
-					<h3>GCS as Supervised Learning</h3>
-					<ul class="smaller">
-						<li class="fragment">A new CEF to be learned: <span class="green">$f$</span></li>
-						<li class="fragment">Clause representation is important and linked with model architecture</li>
-						<li class="fragment"><span class="green">$f$</span> 
-							is trained from successful proofs:
-							<ul>
-								<li class="fragment"><span class="green">positive examples</span> are selections of clauses that ended up in the final proof.</li>
-								<li class="fragment"><span class="red">negative examples</span> are all other given clause selections</li>
-							</ul>
-						</li>
-						<div class="box fragment" style="padding-left:2em;margin-left:-2em;">
-							<h4>Drawbacks</h4>
-							<li class="fragment red">Usually relies on consistent signature</li>
-							<li class="fragment red">Highly unbalanced training data</li>
-						</div>
-						<!-- <li>My master's thesis was all about this stuff and I didn't have much success</li> -->
-					</ul>
-				</section>
-
-
-				<section id="enigma">
-					<h4>Previous Work: <span class="green">ENIGMA</span></h4>
-					<div class="row">
-						<ul class="smallerfont">
-							<li>Efficient LearNing-based Inference Guiding Machine</li>
-							<li class="fragment">Many features counting occurrences of various tree walks</li>
-							<li class="fragment">Feature hashing</li>
-							<li class="fragment">CEF score given by "in-proofness" classifier probability</li>
-							<li class="fragment">Negated Conjecture Clause Features</li>
-							<li class="fragment"><span class="green">Recursive</span> Neural Network</li>
-							<li class="fragment">
-								<span class="fragment">XGBoost</span>
-								<span class="fragment"><span class="green">&gt;</span> LibLinear</span>
-								<span class="fragment"><span class="green">&gt;</span> NN</span>
-							</li>
-						</ul>
-						<div class="smallerfont">
-							<img src="images/clauseGraph.png" style="height:300px">
-							<span class="green">$p(X,f(sk(X),g(b),g(Y)))$</span>
-						</div>
-					</div>
-				</section>
-
-				<section id="trail">
-					<section>
-						<h4>Previous Work: <span class="green">TRAIL</span></h4>
-						<div class="row"></div>
-						<ul class="smallerfont">
-							<li class="fragment">Trial Reasoner for AI that Learns</li>
-							<li class="fragment">Efficient vectorization as in ENIGMA</li>
-							<li class="fragment">Full processed set context</li>
-							<li class="fragment">First saturation based RL method</li>
-							<li class="fragment">Each context clause votes on its "favorite" unprocessed clause</li>
-							<li class="fragment">Didn't beat E, but substantially improved base prover performance (Beagle)</li>
-						</ul>
-					</section>
-
-					<section>
-						<h4>Previous Work: <span class="green">TRAIL</span> (architecture)</h4>
-						<img class="fragment" src="images/trail.png">
-					</section>
-				</section>
-
-
-				<section id="hindsightExperienceReplay">
-					<h4>Previous Work: <span class="green">Hindsight Experience Replay</span></h4>
-					<ul class="smallerfont">
-						<li class="fragment">Hindsight Experience Replay (DeepMind - 2017)</li>
-						<li class="fragment">Solves problem of limited/discontinuous training data using "hindsight goals"</li>
-						<li class="fragment">Implements a CEF and is another "in-proofness" classifier</li>
-						<li class="fragment">Transformer network with graph laplacian positional embeddings</li>
-					</ul>
-				</section>
-
 
 				<section id="ReinforcementLearning">
 					<section>
@@ -450,24 +437,51 @@ Example Heuristic in E:
 				</section>
 
 				<section>
-					<h3>RL in E</h3>
-					<ul class="small">
-						<li>States:
-							<span class="green">
-								$($
-								<span class="fragment">$t$</span>,
-								<span class="fragment">$|P|$</span>,
-								<span class="fragment">$|U|$</span>,
-								<span class="fragment">$W(P)$</span>,
-								<span class="fragment">$W(U)$</span>
-								$)$
-							</span>
-						</li>
-						<li>Actions: <span class="green fragment">choice from a fixed set of
-								CEFs</span></li>
-						<li>Rewards: <span class="green fragment">given for selection of proof clauses</span></li>
-						<li class="fragment"><hr><span class="yellow">Note:</span> the rewards are calculated retrospectively after the end of a proof attempt</li>
-					</ul>
+					<section>
+						<h3>RL in E</h3>
+						<ul class="small">
+							<li>States:
+								<span class="green">
+									$($
+									<span class="fragment">$t$</span>,
+									<span class="fragment">$|P|$</span>,
+									<span class="fragment">$|U|$</span>,
+									<span class="fragment">$W(P)$</span>,
+									<span class="fragment">$W(U)$</span>
+									$)$
+								</span>
+							</li>
+							<li>Actions: <span class="green fragment">choice from a fixed set of
+									CEFs</span></li>
+							<li>Rewards: <span class="green fragment">given for selection of proof clauses</span></li>
+							<li class="fragment"><hr><span class="yellow">Note:</span> the rewards are calculated retrospectively after the end of a proof attempt</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>RL in E</h3>
+						<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
+Example Heuristic in E:
+(fixed for a proof attempt)
+
+10 * Clauseweight(PreferGoals,1,1,1),
+10 * Clauseweight(PreferNonGoals,1,1,1),
+10 * Clauseweight(ByHornDist,1,1,1),
+1 * FIFOWeight(ConstPrio)
+...
+
+						</textarea>
+						<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
+Example "heuristic" in RL mode 
+(changes during proof attempt):
+
+0.5 * Clauseweight(PreferGoals,1,1,1),
+0.2 * Clauseweight(PreferNonGoals,1,1,1),
+0.1 * Clauseweight(ByHornDist,1,1,1),
+0.1 * FIFOWeight(ConstPrio),
+...
+						</textarea>
+					</section>
 
 				</section>
 
@@ -539,43 +553,7 @@ Example Heuristic in E:
 					<section id="solvedTables">
 						<h3>Number of Problems Solved</h3>
 						<div class="row">
-							<table style="font-size:0.4em;">
-								<tr>
-									<th>Run</th>
-									<th>Solved</th>
-									<th>Solved vs Auto</th>
-								</tr>
-								<tr>
-									<td>SLHRoundRobin</td>
-									<td>3743</td>
-									<td>+493 , -146</td>
-								</tr>
-								<tr>
-									<td>SLHConstCatDistilled_gain5_</td>
-									<td>3728</td>
-									<td>+500 , -168</td>
-								</tr>
-								<tr>
-									<td>SLHNN</td>
-									<td>3676</td>
-									<td>+473 , -193</td>
-								</tr>
-								<tr>
-									<td>SLHConstCat</td>
-									<td>3676</td>
-									<td>+469 , -189</td>
-								</tr>
-								<tr>
-									<td>SLHRoundRobinAllOnes</td>
-									<td>3642</td>
-									<td>+457 , -211</td>
-								</tr>
-								<tr>
-									<td>SLHAuto</td>
-									<td>3396</td>
-									<td>+0 , -0</td>
-								</tr>
-							</table>
+
 							<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
 								<tr>                                                                                                                                                                                                                                                                                                                       
 								<th>Run</th>                                                                                                                                                                                                                                                                                                               
@@ -612,46 +590,83 @@ Example Heuristic in E:
 								<td>1151</td>                                                                                                                                                                                                                                                                                                              
 								<td>+0 , -0</td>                                                                                                                                                                                                                                                                                                           
 								</tr>                                                                                                                                                                                                                                                                                                                      
-							</table>               
+							</table>
+							<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<th>Run</th>                                                                                                                                                                                                                                                                                                               
+								<th>Solved</th>                                                                                                                                                                                                                                                                                                            
+								<th>Solved vs Auto</th>                                                                                                                                                                                                                                                                                                    
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>VBTConstCatDistilled_gain5_</td>                                                                                                                                                                                                                                                                                       
+								<td>3046</td>                                                                                                                                                                                                                                                                                                              
+								<td>+474 , -65</td>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>VBTConstCat</td>                                                                                                                                                                                                                                                                                                       
+								<td>2916</td>                                                                                                                                                                                                                                                                                                              
+								<td>+379 , -100</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>VBTRoundRobin</td>                                                                                                                                                                                                                                                                                                     
+								<td>2841</td>                                                                                                                                                                                                                                                                                                              
+								<td>+269 , -65</td>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>VBTNN</td>                                                                                                                                                                                                                                                                                                             
+								<td>2804</td>                                                                                                                                                                                                                                                                                                              
+								<td>+285 , -118</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>VBTRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+								<td>2701</td>                                                                                                                                                                                                                                                                                                              
+								<td>+215 , -151</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>VBTAuto</td>                                                                                                                                                                                                                                                                                                           
+								<td>2637</td>                                                                                                                                                                                                                                                                                                              
+								<td>+0 , -0</td>                                                                                                                                                                                                                                                                                                           
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								</table>         
 						</div><br>
-
-						<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<th>Run</th>                                                                                                                                                                                                                                                                                                               
-							<th>Solved</th>                                                                                                                                                                                                                                                                                                            
-							<th>Solved vs Auto</th>                                                                                                                                                                                                                                                                                                    
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>VBTConstCatDistilled_gain5_</td>                                                                                                                                                                                                                                                                                       
-							<td>3046</td>                                                                                                                                                                                                                                                                                                              
-							<td>+474 , -65</td>                                                                                                                                                                                                                                                                                                        
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>VBTConstCat</td>                                                                                                                                                                                                                                                                                                       
-							<td>2916</td>                                                                                                                                                                                                                                                                                                              
-							<td>+379 , -100</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>VBTRoundRobin</td>                                                                                                                                                                                                                                                                                                     
-							<td>2841</td>                                                                                                                                                                                                                                                                                                              
-							<td>+269 , -65</td>                                                                                                                                                                                                                                                                                                        
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>VBTNN</td>                                                                                                                                                                                                                                                                                                             
-							<td>2804</td>                                                                                                                                                                                                                                                                                                              
-							<td>+285 , -118</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>VBTRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
-							<td>2701</td>                                                                                                                                                                                                                                                                                                              
-							<td>+215 , -151</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>VBTAuto</td>                                                                                                                                                                                                                                                                                                           
-							<td>2637</td>                                                                                                                                                                                                                                                                                                              
-							<td>+0 , -0</td>                                                                                                                                                                                                                                                                                                           
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							</table>                 
+						<table style="font-size:0.4em;">
+							<tr>
+								<th>Run</th>
+								<th>Solved</th>
+								<th>Solved vs Auto</th>
+							</tr>
+							<tr>
+								<td>SLHRoundRobin</td>
+								<td>3743</td>
+								<td>+493 , -146</td>
+							</tr>
+							<tr>
+								<td>SLHConstCatDistilled_gain5_</td>
+								<td>3728</td>
+								<td>+500 , -168</td>
+							</tr>
+							<tr>
+								<td>SLHNN</td>
+								<td>3676</td>
+								<td>+473 , -193</td>
+							</tr>
+							<tr>
+								<td>SLHConstCat</td>
+								<td>3676</td>
+								<td>+469 , -189</td>
+							</tr>
+							<tr>
+								<td>SLHRoundRobinAllOnes</td>
+								<td>3642</td>
+								<td>+457 , -211</td>
+							</tr>
+							<tr>
+								<td>SLHAuto</td>
+								<td>3396</td>
+								<td>+0 , -0</td>
+							</tr>
+						</table>
+                 
 
 					</section>
 					
@@ -659,43 +674,7 @@ Example Heuristic in E:
 					<section id="processedTables">
 						<h3>Number of Processed Clauses</h3>
 						<div class="row">
-							<table style="font-size:0.4em;">
-								<tr>
-								<th>Run</th>
-								<th>Processed</th>
-								<th>Processed vs Auto</th>
-								</tr>
-								<tr>
-								<td>SLHRoundRobin</td>
-								<td>811.50</td>
-								<td>-2247.36</td>
-								</tr>
-								<tr>
-								<td>SLHConstCatDistilled_gain5_</td>
-								<td>879.00</td>
-								<td>-1778.16</td>
-								</tr>
-								<tr>
-								<td>SLHConstCat</td>
-								<td>939.00</td>
-								<td>-1710.15</td>
-								</tr>
-								<tr>
-								<td>SLHRoundRobinAllOnes</td>
-								<td>940.50</td>
-								<td>-1768.82</td>
-								</tr>
-								<tr>
-								<td>SLHNN</td>
-								<td>946.00</td>
-								<td>-1731.68</td>
-								</tr>
-								<tr>
-								<td>SLHAuto</td>
-								<td>1548.00</td>
-								<td>0.00</td>
-								</tr>
-							</table>
+
 
 							<table style="font-size:0.4em;">
 								<tr>
@@ -734,6 +713,43 @@ Example Heuristic in E:
 								<td>-3433.95</td>
 								</tr>
 							</table>
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Processed</th>
+								<th>Processed vs Auto</th>
+								</tr>
+								<tr>
+								<td>VBTConstCatDistilled_gain5_</td>
+								<td>1535.00</td>
+								<td>-519.26</td>
+								</tr>
+								<tr>
+								<td>VBTRoundRobinAllOnes</td>
+								<td>1565.50</td>
+								<td>-596.00</td>
+								</tr>
+								<tr>
+								<td>VBTConstCat</td>
+								<td>1566.00</td>
+								<td>-593.85</td>
+								</tr>
+								<tr>
+								<td>VBTNN</td>
+								<td>1646.00</td>
+								<td>-516.44</td>
+								</tr>
+								<tr>
+								<td>VBTRoundRobin</td>
+								<td>1722.00</td>
+								<td>-422.24</td>
+								</tr>
+								<tr>
+								<td>VBTAuto</td>
+								<td>1927.00</td>
+								<td>0.00</td>
+								</tr>
+							</table>
 						</div><br>
 
 						<table style="font-size:0.4em;">
@@ -743,37 +759,36 @@ Example Heuristic in E:
 							<th>Processed vs Auto</th>
 							</tr>
 							<tr>
-							<td>VBTConstCatDistilled_gain5_</td>
-							<td>1535.00</td>
-							<td>-519.26</td>
+							<td>SLHRoundRobin</td>
+							<td>811.50</td>
+							<td>-2247.36</td>
 							</tr>
 							<tr>
-							<td>VBTRoundRobinAllOnes</td>
-							<td>1565.50</td>
-							<td>-596.00</td>
+							<td>SLHConstCatDistilled_gain5_</td>
+							<td>879.00</td>
+							<td>-1778.16</td>
 							</tr>
 							<tr>
-							<td>VBTConstCat</td>
-							<td>1566.00</td>
-							<td>-593.85</td>
+							<td>SLHConstCat</td>
+							<td>939.00</td>
+							<td>-1710.15</td>
 							</tr>
 							<tr>
-							<td>VBTNN</td>
-							<td>1646.00</td>
-							<td>-516.44</td>
+							<td>SLHRoundRobinAllOnes</td>
+							<td>940.50</td>
+							<td>-1768.82</td>
 							</tr>
 							<tr>
-							<td>VBTRoundRobin</td>
-							<td>1722.00</td>
-							<td>-422.24</td>
+							<td>SLHNN</td>
+							<td>946.00</td>
+							<td>-1731.68</td>
 							</tr>
 							<tr>
-							<td>VBTAuto</td>
-							<td>1927.00</td>
+							<td>SLHAuto</td>
+							<td>1548.00</td>
 							<td>0.00</td>
 							</tr>
 						</table>
-							
 
 					</section>
 					
@@ -782,43 +797,7 @@ Example Heuristic in E:
 						<h3>Number of Generated Clauses</h3>
 						<div class="row">
                                                                                                                                                                                                                                                                                                                            
-							<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<th>Run</th>                                                                                                                                                                                                                                                                                                               
-								<th>Generated</th>                                                                                                                                                                                                                                                                                                         
-								<th>Generated vs Auto</th>                                                                                                                                                                                                                                                                                                 
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHRoundRobin</td>                                                                                                                                                                                                                                                                                                     
-								<td>1651.00</td>                                                                                                                                                                                                                                                                                                           
-								<td>-31346.46</td>                                                                                                                                                                                                                                                                                                         
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
-								<td>1814.50</td>                                                                                                                                                                                                                                                                                                           
-								<td>-23891.08</td>                                                                                                                                                                                                                                                                                                         
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHNN</td>                                                                                                                                                                                                                                                                                                             
-								<td>1868.00</td>                                                                                                                                                                                                                                                                                                           
-								<td>-22696.30</td>                                                                                                                                                                                                                                                                                                         
-								</tr>
-								<tr>
-								<td>SLHConstCat</td>
-								<td>1913.50</td>
-								<td>-23089.69</td>
-								</tr>
-								<tr>
-								<td>SLHConstCatDistilled_gain5_</td>
-								<td>1955.00</td>
-								<td>-20843.68</td>
-								</tr>
-								<tr>
-								<td>SLHAuto</td>
-								<td>3930.00</td>
-								<td>0.00</td>
-								</tr>
-							</table>
+
 							<table style="font-size:0.4em;">
 								<tr>
 								<th>Run</th>
@@ -856,42 +835,79 @@ Example Heuristic in E:
 								<td>-40216.47</td>
 								</tr>
 							</table>
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Generated</th>
+								<th>Generated vs Auto</th>
+								</tr>
+								<tr>
+								<td>VBTConstCatDistilled_gain5_</td>
+								<td>4752.00</td>
+								<td>1957.39</td>
+								</tr>
+								<tr>
+								<td>VBTRoundRobinAllOnes</td>
+								<td>4767.00</td>
+								<td>-2306.29</td>
+								</tr>
+								<tr>
+								<td>VBTConstCat</td>
+								<td>4805.00</td>
+								<td>-865.66</td>
+								</tr>
+								<tr>
+								<td>VBTNN</td>
+								<td>5317.00</td>
+								<td>668.75</td>
+								</tr>
+								<tr>
+								<td>VBTRoundRobin</td>
+								<td>6764.50</td>
+								<td>-1.01</td>
+								</tr>
+								<tr>
+								<td>VBTAuto</td>
+								<td>8783.00</td>
+								<td>0.00</td>
+								</tr>
+							</table>
 						</div><br>
 
-						<table style="font-size:0.4em;">
-							<tr>
-							<th>Run</th>
-							<th>Generated</th>
-							<th>Generated vs Auto</th>
+						<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<th>Run</th>                                                                                                                                                                                                                                                                                                               
+							<th>Generated</th>                                                                                                                                                                                                                                                                                                         
+							<th>Generated vs Auto</th>                                                                                                                                                                                                                                                                                                 
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHRoundRobin</td>                                                                                                                                                                                                                                                                                                     
+							<td>1651.00</td>                                                                                                                                                                                                                                                                                                           
+							<td>-31346.46</td>                                                                                                                                                                                                                                                                                                         
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+							<td>1814.50</td>                                                                                                                                                                                                                                                                                                           
+							<td>-23891.08</td>                                                                                                                                                                                                                                                                                                         
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHNN</td>                                                                                                                                                                                                                                                                                                             
+							<td>1868.00</td>                                                                                                                                                                                                                                                                                                           
+							<td>-22696.30</td>                                                                                                                                                                                                                                                                                                         
 							</tr>
 							<tr>
-							<td>VBTConstCatDistilled_gain5_</td>
-							<td>4752.00</td>
-							<td>1957.39</td>
+							<td>SLHConstCat</td>
+							<td>1913.50</td>
+							<td>-23089.69</td>
 							</tr>
 							<tr>
-							<td>VBTRoundRobinAllOnes</td>
-							<td>4767.00</td>
-							<td>-2306.29</td>
+							<td>SLHConstCatDistilled_gain5_</td>
+							<td>1955.00</td>
+							<td>-20843.68</td>
 							</tr>
 							<tr>
-							<td>VBTConstCat</td>
-							<td>4805.00</td>
-							<td>-865.66</td>
-							</tr>
-							<tr>
-							<td>VBTNN</td>
-							<td>5317.00</td>
-							<td>668.75</td>
-							</tr>
-							<tr>
-							<td>VBTRoundRobin</td>
-							<td>6764.50</td>
-							<td>-1.01</td>
-							</tr>
-							<tr>
-							<td>VBTAuto</td>
-							<td>8783.00</td>
+							<td>SLHAuto</td>
+							<td>3930.00</td>
 							<td>0.00</td>
 							</tr>
 						</table>
@@ -901,43 +917,7 @@ Example Heuristic in E:
 					<section id="proofClauseTables">
 						<h3>Proof Sizes</h3>
 						<div class="row">
-							<table style="font-size:0.4em;">
-								<tr>
-								<th>Run</th>
-								<th>Proof Clauses</th>
-								<th>Proof Clauses vs Auto</th>
-								</tr>
-								<tr>
-								<td>SLHAuto</td>
-								<td>11.00</td>
-								<td>0.00</td>
-								</tr>
-								<tr>
-								<td>SLHRoundRobin</td>
-								<td>11.00</td>
-								<td>0.08</td>
-								</tr>
-								<tr>
-								<td>SLHConstCatDistilled_gain5_</td>
-								<td>11.00</td>
-								<td>0.47</td>
-								</tr>
-								<tr>
-								<td>SLHRoundRobinAllOnes</td>
-								<td>11.00</td>
-								<td>0.56</td>
-								</tr>
-								<tr>
-								<td>SLHNN</td>
-								<td>11.00</td>
-								<td>0.60</td>
-								</tr>
-								<tr>
-								<td>SLHConstCat</td>
-								<td>11.00</td>
-								<td>0.75</td>
-								</tr>
-							</table>
+
 
 							<table style="font-size:0.4em;">
 								<tr>
@@ -976,7 +956,45 @@ Example Heuristic in E:
 								<td>0.73</td>
 								</tr>
 							</table>
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Proof Clauses</th>
+								<th>Proof Clauses vs Auto</th>
+								</tr>
+								<tr>
+								<td>VBTConstCatDistilled_gain5_</td>
+								<td>12.00</td>
+								<td>-0.22</td>
+								</tr>
+								<tr>
+								<td>VBTNN</td>
+								<td>12.00</td>
+								<td>-0.19</td>
+								</tr>
+								<tr>
+								<td>VBTConstCat</td>
+								<td>12.00</td>
+								<td>-0.12</td>
+								</tr>
+								<tr>
+								<td>VBTRoundRobinAllOnes</td>
+								<td>12.00</td>
+								<td>-0.10</td>
+								</tr>
+								<tr>
+								<td>VBTAuto</td>
+								<td>13.00</td>
+								<td>0.00</td>
+								</tr>
+								<tr>
+								<td>VBTRoundRobin</td>
+								<td>13.00</td>
+								<td>0.30</td>
+								</tr>
+							</table>
 						</div><br>
+
 
 						<table style="font-size:0.4em;">
 							<tr>
@@ -985,34 +1003,34 @@ Example Heuristic in E:
 							<th>Proof Clauses vs Auto</th>
 							</tr>
 							<tr>
-							<td>VBTConstCatDistilled_gain5_</td>
-							<td>12.00</td>
-							<td>-0.22</td>
-							</tr>
-							<tr>
-							<td>VBTNN</td>
-							<td>12.00</td>
-							<td>-0.19</td>
-							</tr>
-							<tr>
-							<td>VBTConstCat</td>
-							<td>12.00</td>
-							<td>-0.12</td>
-							</tr>
-							<tr>
-							<td>VBTRoundRobinAllOnes</td>
-							<td>12.00</td>
-							<td>-0.10</td>
-							</tr>
-							<tr>
-							<td>VBTAuto</td>
-							<td>13.00</td>
+							<td>SLHAuto</td>
+							<td>11.00</td>
 							<td>0.00</td>
 							</tr>
 							<tr>
-							<td>VBTRoundRobin</td>
-							<td>13.00</td>
-							<td>0.30</td>
+							<td>SLHRoundRobin</td>
+							<td>11.00</td>
+							<td>0.08</td>
+							</tr>
+							<tr>
+							<td>SLHConstCatDistilled_gain5_</td>
+							<td>11.00</td>
+							<td>0.47</td>
+							</tr>
+							<tr>
+							<td>SLHRoundRobinAllOnes</td>
+							<td>11.00</td>
+							<td>0.56</td>
+							</tr>
+							<tr>
+							<td>SLHNN</td>
+							<td>11.00</td>
+							<td>0.60</td>
+							</tr>
+							<tr>
+							<td>SLHConstCat</td>
+							<td>11.00</td>
+							<td>0.75</td>
 							</tr>
 						</table>
 							
@@ -1021,37 +1039,6 @@ Example Heuristic in E:
 					<section id="efficiencyTables">
 						<h6 class="smallerfont">Efficiency (proof clauses / processed clauses)</h6>
 						<div class="row">
-							<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<th>Run</th>                                                                                                                                                                                                                                                                                                               
-								<th>Efficiency</th>                                                                                                                                                                                                                                                                                                        
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHRoundRobin</td>                                                                                                                                                                                                                                                                                                     
-								<td>0.018110777</td>                                                                                                                                                                                                                                                                                                       
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHConstCatDistilled_gain5_</td>                                                                                                                                                                                                                                                                                       
-								<td>0.017877117</td>                                                                                                                                                                                                                                                                                                       
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
-								<td>0.017021277</td>                                                                                                                                                                                                                                                                                                       
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHNN</td>                                                                                                                                                                                                                                                                                                             
-								<td>0.016658505</td>                                                                                                                                                                                                                                                                                                       
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHConstCat</td>                                                                                                                                                                                                                                                                                                       
-								<td>0.016632017</td>                                                                                                                                                                                                                                                                                                       
-								</tr>                                                                                                                                                                                                                                                                                                                      
-								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>SLHAuto</td>                                                                                                                                                                                                                                                                                                           
-								<td>0.009582864</td>                                                                                                                                                                                                                                                                                                       
-								</tr>                                                                                                                                                                                                                                                                                                                      
-							</table> 
-
 							<table style="font-size:0.4em;">
 								<tr>
 								<th>Run</th>
@@ -1083,39 +1070,68 @@ Example Heuristic in E:
 								</tr>
 							</table>
 
+							<table style="font-size:0.4em;">
+								<tr>
+								<th>Run</th>
+								<th>Efficiency</th>
+								</tr>
+								<tr>
+								<td>VBTRoundRobin</td>
+								<td>0.011312217</td>
+								</tr>
+								<tr>
+								<td>VBTRoundRobinAllOnes</td>
+								<td>0.011198208</td>
+								</tr>
+								<tr>
+								<td>VBTConstCatDistilled_gain5_</td>
+								<td>0.010981474</td>
+								</tr>
+								<tr>
+								<td>VBTConstCat</td>
+								<td>0.010810811</td>
+								</tr>
+								<tr>
+								<td>VBTNN</td>
+								<td>0.009973404</td>
+								</tr>
+								<tr>
+								<td>VBTAuto</td>
+								<td>0.009130982</td>
+								</tr>
+							</table>
 						</div><br>
 
-						<table style="font-size:0.4em;">
-							<tr>
-							<th>Run</th>
-							<th>Efficiency</th>
-							</tr>
-							<tr>
-							<td>VBTRoundRobin</td>
-							<td>0.011312217</td>
-							</tr>
-							<tr>
-							<td>VBTRoundRobinAllOnes</td>
-							<td>0.011198208</td>
-							</tr>
-							<tr>
-							<td>VBTConstCatDistilled_gain5_</td>
-							<td>0.010981474</td>
-							</tr>
-							<tr>
-							<td>VBTConstCat</td>
-							<td>0.010810811</td>
-							</tr>
-							<tr>
-							<td>VBTNN</td>
-							<td>0.009973404</td>
-							</tr>
-							<tr>
-							<td>VBTAuto</td>
-							<td>0.009130982</td>
-							</tr>
-						</table>
-
+						<table style="font-size:0.4em;">                                                                                                                                                                                                                                                                                           
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<th>Run</th>                                                                                                                                                                                                                                                                                                               
+							<th>Efficiency</th>                                                                                                                                                                                                                                                                                                        
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHRoundRobin</td>                                                                                                                                                                                                                                                                                                     
+							<td>0.018110777</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHConstCatDistilled_gain5_</td>                                                                                                                                                                                                                                                                                       
+							<td>0.017877117</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHRoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+							<td>0.017021277</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHNN</td>                                                                                                                                                                                                                                                                                                             
+							<td>0.016658505</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHConstCat</td>                                                                                                                                                                                                                                                                                                       
+							<td>0.016632017</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+							<tr>                                                                                                                                                                                                                                                                                                                       
+							<td>SLHAuto</td>                                                                                                                                                                                                                                                                                                           
+							<td>0.009582864</td>                                                                                                                                                                                                                                                                                                       
+							</tr>                                                                                                                                                                                                                                                                                                                      
+						</table> 
 
 					</section>
 
