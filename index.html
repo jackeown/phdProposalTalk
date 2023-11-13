@@ -77,14 +77,28 @@
 				font-size:0.8em;
 			}
 
+			.smallestfont{
+				font-size:0.7em;
+			}
+
 			th{
 				color:rgb(150, 255, 150);
 			}
 
 			/* first child of tr */
-			tr > *:first-child{
+			/* tr > *:first-child{
+				color:rgb(150, 255, 150);
+			} */
+
+			tr > *:first-child:not(.learningBased) {
 				color:rgb(150, 255, 150);
 			}
+
+			.learningBased{
+				color:rgb(130, 203, 255);
+				font-weight: 600;
+			}
+
 
 			table{
 				border: 1px solid white;
@@ -107,10 +121,9 @@
 						<ol>
 							<li class="fragment">First-Order Logic, CNF, Saturation-based ATP</li>
 							<li class="fragment">Given Clause Selection & E heuristics</li>
-							<li class="fragment">Previous Work</li>
+							<li class="fragment">Previous Work in Given Clause Selection</li>
 							
-							<li class="fragment">Reinforcement Learning</li>
-							<li class="fragment">Proximal Policy Optimization</li>
+							<li class="fragment">Reinforcement Learning & Proximal Policy Optimization</li>
 							<li class="fragment">My RL Setup for Given Clause Selection</li>
 							<li class="fragment">Results / Analysis / Plots</li>
 							<li class="fragment">Possible Directions for Future Research</li>
@@ -123,11 +136,10 @@
 					<h3>First Order Logic</h3>
 					<hr>
 					<ul class="small">
-						<li class="fragment"><span class="green">Boolean constants</span> (from propositional logic)</li>
-						<li class="fragment"><span class="green">Logical connectives</span> (from propositional logic)</li>
+						<li class="fragment"><span class="green">Propositions and Logical Connectives</span> <br>(from propositional logic)<br><br></li>
 						<li class="fragment"><span class="green">Variables</span></li>
-						<li class="fragment"><span class="green">Functions</span> (that produce non-booleans)</li>
-						<li class="fragment"><span class="green">Predicates</span> (that produce booleans)</li>
+						<li class="fragment"><span class="green">Functions</span> (which produce non-booleans)</li>
+						<li class="fragment"><span class="green">Predicates</span> (which produce booleans)</li>
 					</ul>
 				</section>
 
@@ -136,12 +148,12 @@
 					<div class="box">
 						This first order statement: 
 						<span class="red">
-							$$ \forall X \exists Y : p(X,f(Y)) \; | \; (q(X)\wedge q(Y))$$
+							$$ \forall X \exists Y : p(X,f(Y)) \; \vee \; (q(X)\wedge q(Y))$$
 						</span>
 						<span class="fragment">
 							becomes
 							<span class="green">
-								$$ \underbrace{p(X, f(sk(X))) \; | \; q(X)}_{clause} \;\; \bigwedge \;\; \underbrace{p(X, f(sk(X))) \; | \;q(sk(X))}_{clause} $$
+								$$ \underbrace{p(X, f(sk(X))) \; \vee \; q(X)}_{clause} \;\; \bigwedge \;\; \underbrace{p(X, f(sk(X))) \; \vee \;q(sk(X))}_{clause} $$
 							</span>
 							in Conjunctive/Clause Normal Form (CNF).<br>
 							(In CNF all variables are universally quantified.)
@@ -157,93 +169,17 @@
 							Prove conjecture, $C$, by showing that <br>
 							&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">CNF(axioms $\cup$ $\{\sim C\}$)</span><br> is unsatisfiable
 						</li>
-						<li class="fragment">Show unsatisfiability by inferring $false$ via saturation</li>
+						<li class="fragment">Show unsatisfiability by inferring the empty clause via saturation</li>
 						<!-- <li class="fragment smaller green">(Intuition: the empty clause must be false because if the empty clause were true, then every clause would need to be as well: <br>$empty | false \equiv false$)</li> -->
 					</ul>
+
 				</section>
 
 				<section id="givenClauseSelection">
 					<h3>Given Clause Selection</h3>
-					<img src="images/processedAndUnprocessedSets3.svg" style="background:white">
+					<img src="images/processedAndUnprocessedSets7.svg" style="background:white">
 					<ul>
 						<li style="font-size: 0.7em;">Improving given clause selection is a core goal of ATP research</li>
-					</ul>
-				</section>
-
-
-				<section id="gcsSupervisedLearning">
-					<h3>GCS as Supervised Learning</h3>
-					<ul class="smallerfont">
-						<li class="fragment">Learn a function to evaluate clauses: <span class="green">$f_\theta(clause, context) \rightarrow score$</span></li>
-						<li class="fragment">Clause representation is linked with model architecture</li>
-						<li class="fragment"><span class="green">$f$</span> 
-							is trained from successful proofs:
-							<ul>
-								<li class="fragment"><span class="green">positive examples:</span> proof clause selections.</li>
-								<li class="fragment"><span class="red">negative examples:</span> all other clause selections</li>
-							</ul>
-						</li>
-						<div class="box fragment" style="padding-left:2em;margin-left:-2em;">
-							<h4 style="margin-bottom:0px">Drawbacks</h4>
-							<li class="fragment red">Usually relies on consistent signature</li>
-							<li class="fragment red">Highly unbalanced training data <br>(most selected clauses aren't in the proof)</li>
-						</div>
-					</ul>
-				</section>
-
-
-				<section id="enigma">
-					<h4>Previous Work: <span class="green">ENIGMA</span></h4>
-					<div class="row">
-						<ul style="font-size:0.7em;">
-							<li class="fragment">Clause features count tree walks</li>
-							<li class="fragment">Feature hashing</li>
-							<li class="fragment">Clause evaluation comes from classifier probability</li>
-							<li class="fragment">Negated conjecture context</li>
-							<li class="fragment"><span class="green">Recursive</span> Neural Network</li>
-							<li class="fragment">
-								<span class="fragment">XGBoost</span>
-								<span class="fragment"><span class="green">&gt;</span> LibLinear</span>
-								<span class="fragment"><span class="green">&gt;</span> NN</span>
-								<span class="fragment"><span class="green">&gt;</span> base</span>
-							</li>
-						</ul>
-						<div class="smallerfont">
-							<img src="images/clauseGraph.png" style="height:250px">
-							<span class="green smallerfont">$p(X,f(sk(X),g(b),g(Y)))$</span>
-						</div>
-					</div>
-				</section>
-
-				<section id="trail">
-					<section>
-						<h4>Previous Work: <span class="green">TRAIL</span></h4>
-						<div class="row"></div>
-						<ul class="smallerfont">
-							<li class="fragment">Efficient vectorization as in ENIGMA</li>
-							<li class="fragment">Full processed set context</li>
-							<li class="fragment">First saturation-based RL method</li>
-							<li class="fragment">Each context clause votes on its "favorite" unprocessed clause</li>
-							<li class="fragment">Substantially improved base prover performance (Beagle)</li>
-							<li class="fragment">Close to E --auto performance</li>
-						</ul>
-					</section>
-
-					<!-- <section>
-						<h4>Previous Work: <span class="green">TRAIL</span> (architecture)</h4>
-						<img class="fragment" src="images/trail.png">
-					</section> -->
-				</section>
-
-
-				<section id="hindsightExperienceReplay">
-					<h4>Previous Work: <span class="green">Hindsight Experience Replay</span></h4>
-					<ul class="smallerfont">
-						<li class="fragment">Hindsight Experience Replay (DeepMind - 2017)</li>
-						<li class="fragment">Provides extra training data using "hindsight goals"</li>
-						<li class="fragment">Implements a CEF and is another "in-proofness" classifier</li>
-						<li class="fragment">Transformer network with graph laplacian positional embeddings</li>
-						<li class="fragment">Beats E's --auto mode and even --auto-schedule</li>
 					</ul>
 				</section>
 
@@ -343,74 +279,101 @@ Example Heuristic in E:
 
 				</section>
 
-				<section id="basicIdea">
-					<h3>General Idea of My Research</h3>
+
+				<section id="gcsSupervisedLearning">
+					<h3>GCS as Supervised Learning</h3>
 					<ul class="smallerfont">
-						<li class="fragment">Dynamically decide which queue (CEF) to use</li>
-						<li class="fragment">Based on efficiently tracked state within E</li>
-						<li class="fragment green">Sidesteps clause representation</li>
+						<li class="fragment">Learn a function to evaluate clauses: <span class="green">$f_\theta(clause, context) \rightarrow score$</span></li>
+						<li class="fragment">Clause representation is linked with model architecture</li>
+						<li class="fragment"><span class="green">$f$</span> 
+							is trained as a classifier using successful proofs:
+							<ul>
+								<li class="fragment"><span class="green">positive examples:</span> proof clause selections.</li>
+								<li class="fragment"><span class="red">negative examples:</span> all other clause selections</li>
+							</ul>
+						</li>
+						<div class="box fragment" style="padding-left:2em;margin-left:-2em;">
+							<h4 style="margin-bottom:0px">Drawbacks</h4>
+							<li class="fragment red">Usually relies on consistent signature</li>
+							<li class="fragment red">Highly unbalanced training data <br>(most selected clauses aren't in the proof)</li>
+						</div>
 					</ul>
-
-					<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
-Example Heuristic in E:
-(fixed for a proof attempt)
-
-10 * Clauseweight(PreferGoals,1,1,1),
-10 * Clauseweight(PreferNonGoals,1,1,1),
-10 * Clauseweight(ByHornDist,1,1,1),
-1 * FIFOWeight(ConstPrio)
-...
-												
-					</textarea>
-					<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
-Example "heuristic" in RL mode 
-(probabilities change during proof attempt):
-
-0.5 * Clauseweight(PreferGoals,1,1,1),
-0.2 * Clauseweight(PreferNonGoals,1,1,1),
-0.1 * Clauseweight(ByHornDist,1,1,1),
-0.1 * FIFOWeight(ConstPrio),
-...
-					</textarea>
 				</section>
 
-				<section id="ReinforcementLearning">
-					<section>
-						<h3>CEF Selection</h3>
-						<ul>
-							<li class="fragment smallerfont">Which CEFs should be available?</li>
-							<li class="fragment smallerfont">For each dataset:
-								<ul>
-									<li>all CEFs ever used by --auto</li>
-								</ul> 
-							</li>
-							<li class="fragment smallerfont">~40 CEFs for each dataset</li>
-						</ul>
+
+				<section id="prevWork">
+
+					<section id="enigma">
+						<h4>Previous Work: <span class="green">ENIGMA</span></h4>
+						<div class="row">
+							<ul style="font-size:0.7em;">
+								<li class="fragment">Clause evaluation comes from classifier probability</li>
+								<li class="fragment">Clause features count tree walks</li>
+								<li class="fragment">Feature hashing</li>
+								<li class="fragment">Negated conjecture context</li>
+								<hr>
+								<li class="fragment">Compared with a <span class="green">Recursive</span> Neural Network</li>
+								<li class="fragment">
+									<span class="fragment">XGBoost</span>
+									<span class="fragment"><span class="green">&gt;</span> LibLinear</span>
+									<span class="fragment"><span class="green">&gt;</span> NN</span>
+									<span class="fragment"><span class="green">&gt;</span> baseline</span>
+								</li>
+							</ul>
+							<div class="smallerfont">
+								<img src="images/clauseGraph.png" style="height:250px">
+								<span class="green smallerfont">$p(X,f(sk(X),g(b),g(Y)))$</span>
+							</div>
+						</div>
+						<aside class="notes">
+							
+						</aside>
 					</section>
 
-					<section>
-						<h3>RL in E</h3>
-						<ul class="small">
-							<li>States:
-								<span class="green">
-									$($
-									<span class="fragment">$t$</span>,
-									<span class="fragment">$|P|$</span>,
-									<span class="fragment">$|U|$</span>,
-									<span class="fragment">$W(P)$</span>,
-									<span class="fragment">$W(U)$</span>
-									$)$
-								</span>
-							</li>
-							<li>Actions: <span class="green fragment">choice from a fixed set of CEFs</span></li>
-							<li>Rewards: <span class="green fragment">given for selection of proof clauses</span></li>
-							<li class="fragment"><hr>Rewards calculated after proof</li>
+					<!--  -->
+
+					<section id="trail">
+						<h4>Previous Work: <span class="green">TRAIL</span></h4>
+						<div class="row"></div>
+						<ul class="smallerfont">
+							<li class="fragment">Efficient vectorization as in ENIGMA</li>
+							<li class="fragment">Full processed set context</li>
+							<li class="fragment">First saturation-based RL method</li>
+							<li class="fragment">Each context clause votes on its "favorite" unprocessed clause</li>
+							<li class="fragment">Substantially improved base prover performance (Beagle)</li>
+							<li class="fragment">Close to E --auto performance</li>
 						</ul>
+						<aside class="notes">
+							
+						</aside>
 					</section>
-	
-					
+
+					<!--  -->
+
+					<section id="hindsightExperienceReplay">
+						<h4>Previous Work: <span class="green">Hindsight Experience Replay</span></h4>
+						<ul class="smallerfont">
+							<li class="fragment">Another "in-proofness" classifier CEF</li>
+							<li class="fragment">Hindsight Experience Replay (DeepMind - 2017)</li>
+							<li class="fragment">Provides extra training data using "hindsight goals":
+								<ul>
+									<li class="fragment">Failed to saturate <span class="green">$CNF(Ax \cup \{\sim C\})$</span></li>
+									<li class="fragment">Create a synthetic problem <span class="green">$CNF(Ax \cup \{\sim C, \sim D\})$</span> from any clause <span class="green">$D$</span> derived during the attempt</li>
+								</ul>
+							</li>
+							<li class="fragment">Transformer network with graph laplacian positional embeddings</li>
+							<li class="fragment">Beats E's --auto mode and even --auto-schedule!</li>
+						</ul>
+						<aside class="notes">
+							
+						</aside>
+					</section>
+				</section>
+
+
+				<section id="RL">
 					<section>
-						<h3>RL / Policy Gradients</h3>
+						<h3>RL / Policy Gradients Background</h3>
 						<ul style="font-size: 0.7em;">
 							<li class="fragment">States, Actions and Rewards</li>
 							<li class="fragment" style="line-height: 1.9em;">Policy:
@@ -461,7 +424,7 @@ Example "heuristic" in RL mode
 					<section>
 						<h3>Proximal Policy Optimization (PPO)</h3>
 						<ul style="font-size:0.7em;">
-							<li class="fragment">Simpler successor to Trust Region Policy Optimization (TRPO)</li>
+							<!-- <li class="fragment">Simpler successor to Trust Region Policy Optimization (TRPO)</li> -->
 							<li class="fragment">Main Idea: <span class="green">Learn from the same data multiple times in
 									mini-batches <br>without drastically affecting the current policy.</span></li>
 							<span class="fragment">
@@ -484,13 +447,105 @@ Example "heuristic" in RL mode
 							+ PPO limits the magnitude of the overall policy change.
 						</aside>
 					</section>
+				</section>
+
+
+				<section id="basicIdea">
+					<h3>General Idea of My Research</h3>
+					<ul class="smallerfont">
+						<li class="fragment">Dynamically decide which queue (CEF) to use</li>
+						<li class="fragment">Based on efficiently tracked state within E</li>
+						<li class="fragment">E &nbsp;&nbsp;<span class="green">$\leftarrow$named pipes$\rightarrow$</span>&nbsp;&nbsp; PyTorch</li>
+						<li class="fragment green">Sidesteps clause representation</li>
+						<li class="fragment green">Little overhead compared to neural clause evaluation</li>
+					</ul>
+
+					<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
+Example Heuristic in E:
+(fixed for a proof attempt)
+
+10 * Clauseweight(PreferGoals,1,1,1),
+10 * Clauseweight(PreferNonGoals,1,1,1),
+10 * Clauseweight(ByHornDist,1,1,1),
+1 * FIFOWeight(ConstPrio)
+...
+												
+					</textarea>
+					<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
+Example "heuristic" in RL mode 
+(probabilities change during proof attempt):
+
+0.5 * Clauseweight(PreferGoals,1,1,1),
+0.2 * Clauseweight(PreferNonGoals,1,1,1),
+0.1 * Clauseweight(ByHornDist,1,1,1),
+0.1 * FIFOWeight(ConstPrio),
+...
+					</textarea>
+				</section>
+
+				<section id="ReinforcementLearning">
+
+					<section>
+						<h3>RL State in E</h3>
+						<ul class="small">
+							<li>
+								<span>
+									$($
+									<span class="green">$t$</span>,
+									<span class="green">$|P|$</span>,
+									<span class="green">$|U|$</span>,
+									<span class="green">$W(P)$</span>,
+									<span class="green">$W(U)$</span>
+									$)$
+								</span>
+							</li>
+							<hr>
+							<li class="fragment smallerfont"><span class="green">$t$</span> - Number of clause selections performed so far</li>
+							<li class="fragment smallerfont"><span class="green">$|P|$</span> - Number of clauses in the processed set</li>
+							<li class="fragment smallerfont"><span class="green">$|U|$</span> - Number of clauses in the unprocessed set</li>
+							<li class="fragment smallerfont"><span class="green">$W(P)$</span> - Average weight of the clauses in the processed set</li>
+							<li class="fragment smallerfont"><span class="green">$W(U)$</span> - Average weight of the clauses in the unprocessed set</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>RL Actions in E</h3>
+						<ul class="small">
+							<li class="green smallerfont">choice from a fixed set of CEFs</li>
+							<li class="fragment smallerfont">Which CEFs should be available?</li>
+							<li class="fragment smallerfont">For each dataset:
+								<ul>
+									<li>all CEFs ever used by --auto</li>
+								</ul> 
+							</li>
+							<li class="fragment smallerfont">~40 CEFs for each dataset</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>RL Rewards in E</h3>
+						<ul class="small">
+							<li class="fragment"><span class="red">0</span> for selection of non-proof clauses</li>
+							<li class="fragment"><span class="green">$\frac{1}{n}$</span> for selection of proof clauses
+								<span class="smallestfont"><br>(where <span class="green">$n$</span> is the number of proof clauses)</span>
+							</li>
+							<li class="fragment"><hr>Rewards calculated after proof attempt
+								<ul class="smallestfont"><li>Custom PPO implementation 😕</li></ul>
+							</li>
+						</ul>
+					</section>
 	
 				</section>
 
 				<section id="experimentalSetup">
 					<section>
-						<h3>Experiment Architecture</h3>
-						<img src="images/architecture.svg" style="background:whitesmoke">
+						<h3>Training Architecture</h3>
+						<img src="images/training_architecture.svg" style="background:rgba(255,255,255,0.8)">
+					</section>
+
+					<section>
+						<h3>Testing Architecture</h3>
+						<img src="images/testing_architecture.svg" style="background:rgba(255,255,255,0.8)">
 					</section>
 	
 					<section>
@@ -504,7 +559,7 @@ Example "heuristic" in RL mode
 								<span class="green" style="text-decoration:underline">Constant Categorical</span>:
 								<span class="smallfont">
 									Randomly samples CEF from a learned distribution
-									<br><span class="red">(Ignores RL State)</span>
+									<br><span class="yellow">(Ignores RL State)</span>
 								</span>
 							</li>
 							<hr class="fragment">
@@ -512,18 +567,18 @@ Example "heuristic" in RL mode
 								<span class="green" style="text-decoration:underline">Distilled Categorical</span>:
 								<span class="smallfont">
 									ConstCat reduced to a standard E heuristic.
-									<br><span class="red">(Removes randomness and overhead)</span>
+									<br><span class="yellow">(Removes randomness and overhead)</span>
 								</span>
 							</li>
 							<hr class="fragment">
 							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
 								<span class="green" style="text-decoration:underline">--auto</span>:
-								<span class="smallfont">E's best strategy <span class="red">(other than --auto-schedule)</span></span>
+								<span class="smallfont">E's best strategy <span class="yellow">(other than --auto-schedule)</span></span>
 							</li>
 							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
-								<span class="green" style="text-decoration:underline">RoundRobin / RoundRobinAllOnes</span>:
+								<span class="green" style="text-decoration:underline">Master / MasterAllOnes</span>:
 								<span class="smallfont"> 
-									<br><span class="red">(Derived from --auto over that dataset)</span>
+									<br><span class="yellow">(Derived from --auto over that dataset)</span>
 								</span>
 							</li>
 						</ul>
@@ -561,12 +616,12 @@ Example "heuristic" in RL mode
 								<th>vs Auto</th>                                                                                                                                                                                                                                                                                                    
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>NeuralNet</td>                                                                                                                                                                                                                                                                                                             
+								<td class="learningBased">NeuralNet</td>                                                                                                                                                                                                                                                                                                             
 								<td>1232</td>                                                                                                                                                                                                                                                                                                              
 								<td>+125 , -44</td>                                                                                                                                                                                                                                                                                                        
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>ConstCat</td>                                                                                                                                                                                                                                                                                                       
+								<td class="learningBased">ConstCat</td>                                                                                                                                                                                                                                                                                                       
 								<td>1229</td>                                                                                                                                                                                                                                                                                                              
 								<td>+125 , -47</td>                                                                                                                                                                                                                                                                                                        
 								</tr>                                                                                                                                                                                                                                                                                                                      
@@ -576,12 +631,12 @@ Example "heuristic" in RL mode
 								<td>+124 , -49</td>                                                                                                                                                                                                                                                                                                        
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>RoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+								<td>MasterAllOnes</td>                                                                                                                                                                                                                                                                                              
 								<td>1219</td>                                                                                                                                                                                                                                                                                                              
 								<td>+115 , -47</td>                                                                                                                                                                                                                                                                                                        
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>RoundRobin</td>                                                                                                                                                                                                                                                                                                     
+								<td>Master</td>                                                                                                                                                                                                                                                                                                     
 								<td>1210</td>                                                                                                                                                                                                                                                                                                              
 								<td>+113 , -54</td>                                                                                                                                                                                                                                                                                                        
 								</tr>                                                                                                                                                                                                                                                                                                                      
@@ -604,22 +659,22 @@ Example "heuristic" in RL mode
 								<td>+474 , -65</td>                                                                                                                                                                                                                                                                                                        
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>ConstCat</td>                                                                                                                                                                                                                                                                                                       
+								<td class="learningBased">ConstCat</td>                                                                                                                                                                                                                                                                                                       
 								<td>2916</td>                                                                                                                                                                                                                                                                                                              
 								<td>+379 , -100</td>                                                                                                                                                                                                                                                                                                       
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>RoundRobin</td>                                                                                                                                                                                                                                                                                                     
+								<td>Master</td>                                                                                                                                                                                                                                                                                                     
 								<td>2841</td>                                                                                                                                                                                                                                                                                                              
 								<td>+269 , -65</td>                                                                                                                                                                                                                                                                                                        
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>NeuralNet</td>                                                                                                                                                                                                                                                                                                             
+								<td class="learningBased">NeuralNet</td>                                                                                                                                                                                                                                                                                                             
 								<td>2804</td>                                                                                                                                                                                                                                                                                                              
 								<td>+285 , -118</td>                                                                                                                                                                                                                                                                                                       
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								<tr>                                                                                                                                                                                                                                                                                                                       
-								<td>RoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
+								<td>MasterAllOnes</td>                                                                                                                                                                                                                                                                                              
 								<td>2701</td>                                                                                                                                                                                                                                                                                                              
 								<td>+215 , -151</td>                                                                                                                                                                                                                                                                                                       
 								</tr>                                                                                                                                                                                                                                                                                                                      
@@ -630,44 +685,56 @@ Example "heuristic" in RL mode
 								</tr>                                                                                                                                                                                                                                                                                                                      
 								</table>         
 						</div><br>
-						<table style="font-size:0.4em;">
-							<tr><th></th><th></th><th>SLH-29</th></tr>
-							<tr>
-								<th>Run</th>
-								<th>Solved</th>
-								<th>vs Auto</th>
-							</tr>
-							<tr>
-								<td>RoundRobin</td>
-								<td>3743</td>
-								<td>+493 , -146</td>
-							</tr>
-							<tr>
-								<td>ConstCatDistilled</td>
-								<td>3728</td>
-								<td>+500 , -168</td>
-							</tr>
-							<tr>
-								<td>NeuralNet</td>
-								<td>3676</td>
-								<td>+473 , -193</td>
-							</tr>
-							<tr>
-								<td>ConstCat</td>
-								<td>3676</td>
-								<td>+469 , -189</td>
-							</tr>
-							<tr>
-								<td>RoundRobinAllOnes</td>
-								<td>3642</td>
-								<td>+457 , -211</td>
-							</tr>
-							<tr>
-								<td>Auto</td>
-								<td>3396</td>
-								<td>+0 , -0</td>
-							</tr>
-						</table>
+						<div class="row">
+							<table style="font-size:0.4em;">
+								<tr><th></th><th></th><th>SLH-29</th></tr>
+								<tr>
+									<th>Run</th>
+									<th>Solved</th>
+									<th>vs Auto</th>
+								</tr>
+								<tr>
+									<td>Master</td>
+									<td>3743</td>
+									<td>+493 , -146</td>
+								</tr>
+								<tr>
+									<td>ConstCatDistilled</td>
+									<td>3728</td>
+									<td>+500 , -168</td>
+								</tr>
+								<tr>
+									<td class="learningBased">NeuralNet</td>
+									<td>3676</td>
+									<td>+473 , -193</td>
+								</tr>
+								<tr>
+									<td class="learningBased">ConstCat</td>
+									<td>3676</td>
+									<td>+469 , -189</td>
+								</tr>
+								<tr>
+									<td>MasterAllOnes</td>
+									<td>3642</td>
+									<td>+457 , -211</td>
+								</tr>
+								<tr>
+									<td>Auto</td>
+									<td>3396</td>
+									<td>+0 , -0</td>
+								</tr>
+							</table>
+							<ul class="smallestfont" style="width:47%;margin-left:4%;">
+								<li class="fragment">Strategy selection is most important</li>
+								<li class="fragment">Best results on <span class="green">MPTPTP2078</span></li>
+								<li class="fragment">Promising as part of a portfolio<br> 
+									<ul>
+										<li><span style="font-size:0.7em;font-family: monospace;">(--auto-schedule)</span></li>
+									</ul>
+									
+								</li>
+							</ul>
+						</div>
                  
 
 					</section>
@@ -687,22 +754,22 @@ Example "heuristic" in RL mode
 								<th>vs Auto</th>
 								</tr>
 								<tr>
-								<td>ConstCat</td>
+								<td class="learningBased">ConstCat</td>
 								<td>106.00</td>
 								<td>-3590.75</td>
 								</tr>
 								<tr>
-								<td>NeuralNet</td>
+								<td class="learningBased">NeuralNet</td>
 								<td>108.00</td>
 								<td>-3564.56</td>
 								</tr>
 								<tr>
-								<td>RoundRobinAllOnes</td>
+								<td>MasterAllOnes</td>
 								<td>111.00</td>
 								<td>-3623.32</td>
 								</tr>
 								<tr>
-								<td>RoundRobin</td>
+								<td>Master</td>
 								<td>130.00</td>
 								<td>-3182.97</td>
 								</tr>
@@ -731,22 +798,22 @@ Example "heuristic" in RL mode
 								<td>-519.26</td>
 								</tr>
 								<tr>
-								<td>RoundRobinAllOnes</td>
+								<td>MasterAllOnes</td>
 								<td>1565.50</td>
 								<td>-596.00</td>
 								</tr>
 								<tr>
-								<td>ConstCat</td>
+								<td class="learningBased">ConstCat</td>
 								<td>1566.00</td>
 								<td>-593.85</td>
 								</tr>
 								<tr>
-								<td>NeuralNet</td>
+								<td class="learningBased">NeuralNet</td>
 								<td>1646.00</td>
 								<td>-516.44</td>
 								</tr>
 								<tr>
-								<td>RoundRobin</td>
+								<td>Master</td>
 								<td>1722.00</td>
 								<td>-422.24</td>
 								</tr>
@@ -758,45 +825,52 @@ Example "heuristic" in RL mode
 							</table>
 						</div><br>
 
-						<table style="font-size:0.4em;">
-							<tr><th></th><th></th><th>SLH-29</th></tr>
-
-							<tr>
-							<th>Run</th>
-							<th>Processed</th>
-							<th>vs Auto</th>
-							</tr>
-							<tr>
-							<td>RoundRobin</td>
-							<td>811.50</td>
-							<td>-2247.36</td>
-							</tr>
-							<tr>
-							<td>ConstCatDistilled</td>
-							<td>879.00</td>
-							<td>-1778.16</td>
-							</tr>
-							<tr>
-							<td>ConstCat</td>
-							<td>939.00</td>
-							<td>-1710.15</td>
-							</tr>
-							<tr>
-							<td>RoundRobinAllOnes</td>
-							<td>940.50</td>
-							<td>-1768.82</td>
-							</tr>
-							<tr>
-							<td>NeuralNet</td>
-							<td>946.00</td>
-							<td>-1731.68</td>
-							</tr>
-							<tr>
-							<td>Auto</td>
-							<td>1548.00</td>
-							<td>0.00</td>
-							</tr>
-						</table>
+						<div class="row">
+							<table style="font-size:0.4em;">
+								<tr><th></th><th></th><th>SLH-29</th></tr>
+	
+								<tr>
+								<th>Run</th>
+								<th>Processed</th>
+								<th>vs Auto</th>
+								</tr>
+								<tr>
+								<td>Master</td>
+								<td>811.50</td>
+								<td>-2247.36</td>
+								</tr>
+								<tr>
+								<td>ConstCatDistilled</td>
+								<td>879.00</td>
+								<td>-1778.16</td>
+								</tr>
+								<tr>
+								<td class="learningBased">ConstCat</td>
+								<td>939.00</td>
+								<td>-1710.15</td>
+								</tr>
+								<tr>
+								<td>MasterAllOnes</td>
+								<td>940.50</td>
+								<td>-1768.82</td>
+								</tr>
+								<tr>
+								<td class="learningBased">NeuralNet</td>
+								<td>946.00</td>
+								<td>-1731.68</td>
+								</tr>
+								<tr>
+								<td>Auto</td>
+								<td>1548.00</td>
+								<td>0.00</td>
+								</tr>
+							</table>
+							
+							<ul class="smallestfont" style="width:47%;margin-left:4%;">
+								<li class="fragment">Learning-based approaches require processing fewer clauses for <span class="green">MPTPTP2078</span></li>
+								<li class="fragment">Fewer processed clauses required by <em>all</em> methods for <span class="green">MPTPTP2078</span></li>
+							</ul>
+						</div>
 
 					</section>
 					
@@ -815,22 +889,22 @@ Example "heuristic" in RL mode
 								<th>vs Auto</th>
 								</tr>
 								<tr>
-								<td>ConstCat</td>
+								<td class="learningBased">ConstCat</td>
 								<td>195.00</td>
 								<td>-41430.33</td>
 								</tr>
 								<tr>
-								<td>RoundRobinAllOnes</td>
+								<td>MasterAllOnes</td>
 								<td>199.50</td>
 								<td>-40210.44</td>
 								</tr>
 								<tr>
-								<td>NeuralNet</td>
+								<td class="learningBased">NeuralNet</td>
 								<td>202.00</td>
 								<td>-39402.15</td>
 								</tr>
 								<tr>
-								<td>RoundRobin</td>
+								<td>Master</td>
 								<td>230.00</td>
 								<td>-37017.26</td>
 								</tr>
@@ -859,22 +933,22 @@ Example "heuristic" in RL mode
 								<td>1957.39</td>
 								</tr>
 								<tr>
-								<td>RoundRobinAllOnes</td>
+								<td>MasterAllOnes</td>
 								<td>4767.00</td>
 								<td>-2306.29</td>
 								</tr>
 								<tr>
-								<td>ConstCat</td>
+								<td class="learningBased">ConstCat</td>
 								<td>4805.00</td>
 								<td>-865.66</td>
 								</tr>
 								<tr>
-								<td>NeuralNet</td>
+								<td class="learningBased">NeuralNet</td>
 								<td>5317.00</td>
 								<td>668.75</td>
 								</tr>
 								<tr>
-								<td>RoundRobin</td>
+								<td>Master</td>
 								<td>6764.50</td>
 								<td>-1.01</td>
 								</tr>
@@ -886,45 +960,57 @@ Example "heuristic" in RL mode
 							</table>
 						</div><br>
 
-						<table style="font-size:0.4em;">  
-							<tr><th></th><th></th><th>SLH-29</th></tr>
+						<div class="row">
+							<table style="font-size:0.4em;">  
+								<tr><th></th><th></th><th>SLH-29</th></tr>
+	
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<th>Run</th>                                                                                                                                                                                                                                                                                                               
+								<th>Generated</th>                                                                                                                                                                                                                                                                                                         
+								<th>vs Auto</th>                                                                                                                                                                                                                                                                                                 
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>Master</td>                                                                                                                                                                                                                                                                                                     
+								<td>1651.00</td>                                                                                                                                                                                                                                                                                                           
+								<td>-31346.46</td>                                                                                                                                                                                                                                                                                                         
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>MasterAllOnes</td>                                                                                                                                                                                                                                                                                              
+								<td>1814.50</td>                                                                                                                                                                                                                                                                                                           
+								<td>-23891.08</td>                                                                                                                                                                                                                                                                                                         
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td class="learningBased">NeuralNet</td>                                                                                                                                                                                                                                                                                                             
+								<td>1868.00</td>                                                                                                                                                                                                                                                                                                           
+								<td>-22696.30</td>                                                                                                                                                                                                                                                                                                         
+								</tr>
+								<tr>
+								<td class="learningBased">ConstCat</td>
+								<td>1913.50</td>
+								<td>-23089.69</td>
+								</tr>
+								<tr>
+								<td>ConstCatDistilled</td>
+								<td>1955.00</td>
+								<td>-20843.68</td>
+								</tr>
+								<tr>
+								<td>Auto</td>
+								<td>3930.00</td>
+								<td>0.00</td>
+								</tr>
+							</table>
 
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<th>Run</th>                                                                                                                                                                                                                                                                                                               
-							<th>Generated</th>                                                                                                                                                                                                                                                                                                         
-							<th>vs Auto</th>                                                                                                                                                                                                                                                                                                 
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>RoundRobin</td>                                                                                                                                                                                                                                                                                                     
-							<td>1651.00</td>                                                                                                                                                                                                                                                                                                           
-							<td>-31346.46</td>                                                                                                                                                                                                                                                                                                         
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>RoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
-							<td>1814.50</td>                                                                                                                                                                                                                                                                                                           
-							<td>-23891.08</td>                                                                                                                                                                                                                                                                                                         
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>NeuralNet</td>                                                                                                                                                                                                                                                                                                             
-							<td>1868.00</td>                                                                                                                                                                                                                                                                                                           
-							<td>-22696.30</td>                                                                                                                                                                                                                                                                                                         
-							</tr>
-							<tr>
-							<td>ConstCat</td>
-							<td>1913.50</td>
-							<td>-23089.69</td>
-							</tr>
-							<tr>
-							<td>ConstCatDistilled</td>
-							<td>1955.00</td>
-							<td>-20843.68</td>
-							</tr>
-							<tr>
-							<td>Auto</td>
-							<td>3930.00</td>
-							<td>0.00</td>
-							</tr>
-						</table>
+							<ul class="smallestfont" style="width:47%;margin-left:4%;">
+								<li class="fragment">Fewer generated clauses by <em>all</em> methods for <span class="green">MPTPTP2078</span>
+									<ul class="fragment smallerfont">
+										<li class="fragment">Guidance via CEF selection is more reasonable with a smaller unprocessed set</li>
+									</ul>
+								</li>
+									
+							</ul>
+						</div>
+
 
 					</section>
 
@@ -947,22 +1033,22 @@ Example "heuristic" in RL mode
 								<td>0.00</td>
 								</tr>
 								<tr>
-								<td>ConstCat</td>
+								<td class="learningBased">ConstCat</td>
 								<td>26.00</td>
 								<td>0.54</td>
 								</tr>
 								<tr>
-								<td>NeuralNet</td>
+								<td class="learningBased">NeuralNet</td>
 								<td>26.00</td>
 								<td>0.64</td>
 								</tr>
 								<tr>
-								<td>RoundRobinAllOnes</td>
+								<td>MasterAllOnes</td>
 								<td>26.00</td>
 								<td>0.68</td>
 								</tr>
 								<tr>
-								<td>RoundRobin</td>
+								<td>Master</td>
 								<td>26.00</td>
 								<td>0.73</td>
 								</tr>
@@ -986,17 +1072,17 @@ Example "heuristic" in RL mode
 								<td>-0.22</td>
 								</tr>
 								<tr>
-								<td>NeuralNet</td>
+								<td class="learningBased">NeuralNet</td>
 								<td>12.00</td>
 								<td>-0.19</td>
 								</tr>
 								<tr>
-								<td>ConstCat</td>
+								<td class="learningBased">ConstCat</td>
 								<td>12.00</td>
 								<td>-0.12</td>
 								</tr>
 								<tr>
-								<td>RoundRobinAllOnes</td>
+								<td>MasterAllOnes</td>
 								<td>12.00</td>
 								<td>-0.10</td>
 								</tr>
@@ -1006,52 +1092,57 @@ Example "heuristic" in RL mode
 								<td>0.00</td>
 								</tr>
 								<tr>
-								<td>RoundRobin</td>
+								<td>Master</td>
 								<td>13.00</td>
 								<td>0.30</td>
 								</tr>
 							</table>
 						</div><br>
 
+						<div class="row">
+							<table style="font-size:0.4em;">
+								<tr><th></th><th></th><th>SLH-29</th></tr>
+								<tr>
+								<th>Run</th>
+								<th>Proof Clauses</th>
+								<th>vs Auto</th>
+								</tr>
+								<tr>
+								<td>Auto</td>
+								<td>11.00</td>
+								<td>0.00</td>
+								</tr>
+								<tr>
+								<td>Master</td>
+								<td>11.00</td>
+								<td>0.08</td>
+								</tr>
+								<tr>
+								<td>ConstCatDistilled</td>
+								<td>11.00</td>
+								<td>0.47</td>
+								</tr>
+								<tr>
+								<td>MasterAllOnes</td>
+								<td>11.00</td>
+								<td>0.56</td>
+								</tr>
+								<tr>
+								<td class="learningBased">NeuralNet</td>
+								<td>11.00</td>
+								<td>0.60</td>
+								</tr>
+								<tr>
+								<td class="learningBased">ConstCat</td>
+								<td>11.00</td>
+								<td>0.75</td>
+								</tr>
+							</table>
 
-						<table style="font-size:0.4em;">
-							<tr><th></th><th></th><th>SLH-29</th></tr>
-							<tr>
-							<th>Run</th>
-							<th>Proof Clauses</th>
-							<th>vs Auto</th>
-							</tr>
-							<tr>
-							<td>Auto</td>
-							<td>11.00</td>
-							<td>0.00</td>
-							</tr>
-							<tr>
-							<td>RoundRobin</td>
-							<td>11.00</td>
-							<td>0.08</td>
-							</tr>
-							<tr>
-							<td>ConstCatDistilled</td>
-							<td>11.00</td>
-							<td>0.47</td>
-							</tr>
-							<tr>
-							<td>RoundRobinAllOnes</td>
-							<td>11.00</td>
-							<td>0.56</td>
-							</tr>
-							<tr>
-							<td>NeuralNet</td>
-							<td>11.00</td>
-							<td>0.60</td>
-							</tr>
-							<tr>
-							<td>ConstCat</td>
-							<td>11.00</td>
-							<td>0.75</td>
-							</tr>
-						</table>
+							<ul class="smallestfont" style="width:47%;margin-left:4%;">
+								<li class="fragment">More proof clauses $\rightarrow$ more feedback for learning</li>
+							</ul>
+						</div>
 							
 					</section>
 
@@ -1066,28 +1157,28 @@ Example "heuristic" in RL mode
 								<th>Efficiency</th>
 								</tr>
 								<tr>
-								<td>NeuralNet</td>
-								<td>0.280373832</td>
+								<td class="learningBased">NeuralNet</td>
+								<td>0.2803</td>
 								</tr>
 								<tr>
-								<td>RoundRobinAllOnes</td>
-								<td>0.277027027</td>
+								<td>MasterAllOnes</td>
+								<td>0.2770</td>
 								</tr>
 								<tr>
-								<td>ConstCat</td>
-								<td>0.269909502</td>
+								<td class="learningBased">ConstCat</td>
+								<td>0.2699</td>
 								</tr>
 								<tr>
-								<td>RoundRobin</td>
-								<td>0.237373737</td>
+								<td>Master</td>
+								<td>0.2373</td>
 								</tr>
 								<tr>
 								<td>ConstCatDistilled</td>
-								<td>0.226415094</td>
+								<td>0.2264</td>
 								</tr>
 								<tr>
 								<td>Auto</td>
-								<td>0.192660550</td>
+								<td>0.1926</td>
 								</tr>
 							</table>
 
@@ -1099,64 +1190,69 @@ Example "heuristic" in RL mode
 								<th>Efficiency</th>
 								</tr>
 								<tr>
-								<td>RoundRobin</td>
-								<td>0.011312217</td>
+								<td>Master</td>
+								<td>0.0113</td>
 								</tr>
 								<tr>
-								<td>RoundRobinAllOnes</td>
-								<td>0.011198208</td>
+								<td>MasterAllOnes</td>
+								<td>0.0111</td>
 								</tr>
 								<tr>
 								<td>ConstCatDistilled</td>
-								<td>0.010981474</td>
+								<td>0.0109</td>
 								</tr>
 								<tr>
-								<td>ConstCat</td>
-								<td>0.010810811</td>
+								<td class="learningBased">ConstCat</td>
+								<td>0.0108</td>
 								</tr>
 								<tr>
-								<td>NeuralNet</td>
-								<td>0.009973404</td>
+								<td class="learningBased">NeuralNet</td>
+								<td>0.0099</td>
 								</tr>
 								<tr>
 								<td>Auto</td>
-								<td>0.009130982</td>
+								<td>0.0091</td>
 								</tr>
 							</table>
 						</div><br>
 
-						<table style="font-size:0.4em;">   
-							<tr><th></th><th>SLH-29</th></tr>
-
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<th>Run</th>                                                                                                                                                                                                                                                                                                               
-							<th>Efficiency</th>                                                                                                                                                                                                                                                                                                        
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>RoundRobin</td>                                                                                                                                                                                                                                                                                                     
-							<td>0.018110777</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>ConstCatDistilled</td>                                                                                                                                                                                                                                                                                       
-							<td>0.017877117</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>RoundRobinAllOnes</td>                                                                                                                                                                                                                                                                                              
-							<td>0.017021277</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>NeuralNet</td>                                                                                                                                                                                                                                                                                                             
-							<td>0.016658505</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>ConstCat</td>                                                                                                                                                                                                                                                                                                       
-							<td>0.016632017</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-							<tr>                                                                                                                                                                                                                                                                                                                       
-							<td>Auto</td>                                                                                                                                                                                                                                                                                                           
-							<td>0.009582864</td>                                                                                                                                                                                                                                                                                                       
-							</tr>                                                                                                                                                                                                                                                                                                                      
-						</table> 
+						<div class="row">
+							<table style="font-size:0.4em;">   
+								<tr><th></th><th>SLH-29</th></tr>
+	
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<th>Run</th>                                                                                                                                                                                                                                                                                                               
+								<th>Efficiency</th>                                                                                                                                                                                                                                                                                                        
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>Master</td>                                                                                                                                                                                                                                                                                                     
+								<td>0.0181</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>ConstCatDistilled</td>                                                                                                                                                                                                                                                                                       
+								<td>0.0178</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>MasterAllOnes</td>                                                                                                                                                                                                                                                                                              
+								<td>0.0170</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td class="learningBased">NeuralNet</td>                                                                                                                                                                                                                                                                                                             
+								<td>0.0166</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td class="learningBased">ConstCat</td>                                                                                                                                                                                                                                                                                                       
+								<td>0.0166</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+								<tr>                                                                                                                                                                                                                                                                                                                       
+								<td>Auto</td>                                                                                                                                                                                                                                                                                                           
+								<td>0.0095</td>                                                                                                                                                                                                                                                                                                       
+								</tr>                                                                                                                                                                                                                                                                                                                      
+							</table> 
+							<ul class="smallestfont" style="width:47%;margin-left:4%;">
+								<li class="fragment">~2% for <span class="green">VBT</span> and <span class="green">SLH-29</span> vs ~20% for <span class="green">MPTPTP2078</span></li>
+							</ul>
+						</div>
 
 					</section>
 
@@ -1165,16 +1261,43 @@ Example "heuristic" in RL mode
 						<h3>Summary of Results</h3>
 						<ul class="smallerfont">
 							<li class="fragment">The biggest impact on problems solved was the "strategy aggregation" done to determine the set of actions (CEFs)</li>
-							<li class="fragment">Distilled ConstCat outperforms ConstCat and NeuralNet on SLH and VBT, but not MPTPTP2078</li>
-							<li class="fragment">NeuralNet failed to outperform ConstCat (the state is not very helpful)</li>
-							<li class="fragment">Learning was most effective for MPTPTP2078
-								<ul>
-									<li class="fragment">Perhaps because proofs are found in fewer given clause selections</li>
+							<li class="fragment"><span class="green">NeuralNet</span> failed to beat <span class="green">ConstCat</span>
+								<ul class="smallerfont">
+									<li class="fragment">The state is not very helpful</li>
 								</ul>
 							</li>
+							<li class="fragment">Learning was most effective for <span class="red">MPTPTP2078</span>
+								<ul class="smallerfont">
+									<li class="fragment">Because proofs are found in fewer given clause selections?</li>
+								</ul>
+							</li>
+							<li class="fragment"><span class="green">Distilled ConstCat</span> beats <span class="green">ConstCat</span> and <span class="green">NeuralNet</span> on <span class="red">SLH-29</span> and <span class="red">VBT</span>, but not <span class="red">MPTPTP2078</span></li>
+							<li class="fragment"><span class="green">Master</span> beats everything for <span class="red">SLH-29</span></li>
+
 						</ul>
 
 					</section>
+
+					<section id="policyVisConstCat">
+						<h3>Policy Visualization for ConstCat</h3>
+						<div class="row">
+							<img src="images/MPTConstCat0_MPT0557+1.p.png" style="max-width:45%">
+							<img src="images/MPTConstCat1_MPT1539+1.p.png" style="max-width:45%">
+						</div>
+					</section>
+
+					<section id="policyVisNeuralNet">
+						<h3>Policy Visualization for NeuralNet</h3>
+						<div class="row">
+							<img src="images/MPTNN0_MPT0557+1.p.png" style="max-width:36%;">
+							<img src="images/MPTNN0_MPT1592+1.p.png" style="max-width:36%;">
+						</div>
+						<div class="row">
+							<img src="images/MPTNN1_MPT1539+1.p.png" style="max-width:36%;">
+							<img src="images/MPTNN1_MPT1964+1.p.png" style="max-width:36%;">
+						</div>
+					</section>
+
 				</section>
 
 				<!-- <section id="analysisPlots">
@@ -1183,16 +1306,34 @@ Example "heuristic" in RL mode
 
 
 				<section>
-					<h3>Future Research</h3>
+					<h3>Ideas for Future Research</h3>
 					<ul style="font-size: 0.7em;">
 						<li class="fragment">
-							Explore alternate definitions of states and actions
+							Explore alternate <span class="green">state</span> representations
 							<ul>
-								<li class="fragment">Augment state with a history of past states and actions (frame stacking)</li>
+								<li class="fragment">Use a history of past states and actions as the state (frame stacking)</li>
+								<li class="fragment">Incorporate features from each CEF such as:
+									<ul>
+										<li class="fragment">The average weight of the top few clauses in each CEF queue</li>
+									</ul>
+								</li>
 							</ul>
 						</li>
-						<li class="fragment">
-							Monte Carlo Tree Search using state value: <span class="green">$V(s)$</span>
+						
+						<li class="fragment"><hr>Explore alternate <span class="red">action</span> representations
+							<ul>
+								<li class="fragment">Pick a set of CEFs by targeting diversity</li>
+							</ul>
+						</li>
+
+						<li class="fragment"><hr>Explore alternate <span class="yellow">rewards</span>
+							<ul>
+								<li class="fragment">Use <span class="green">$\frac{1}{n-1}$</span> per proof clause to incentivize finding shorter proofs</li>
+							</ul>
+						</li>
+
+						<li class="fragment"><hr>
+							Use Monte Carlo Tree Search to search for a proof using the learned state values, <span class="green">$V(s)$</span>
 						</li>
 					</ul>
 				</section>
