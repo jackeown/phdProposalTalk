@@ -105,6 +105,20 @@
 				margin:5px;
 			}
 
+			.term{
+				font-family: monospace;
+				background:rgba(255,255,255,0.4);
+				box-shadow: inset 0px 0px 5px white;
+				padding:4px;
+				border-radius:4px;
+				font-size:0.75em;
+			}
+
+			/* make non-first-child td right-aligned */
+			.reveal table tr td:not(:first-child){
+				text-align:right;
+			}
+
 		</style>
 		<div class="reveal">
 			<div class="slides">
@@ -156,7 +170,7 @@
 								$$ \underbrace{p(X, f(sk(X))) \; \vee \; q(X)}_{clause} \;\; \bigwedge \;\; \underbrace{p(X, f(sk(X))) \; \vee \;q(sk(X))}_{clause} $$
 							</span>
 							in Conjunctive/Clause Normal Form (CNF).<br>
-							(In CNF all variables are universally quantified.)
+							(All variables are universally quantified.)
 						</span>
 					</div>
 				</section>
@@ -164,11 +178,11 @@
 				<section id="saturation">
 					<h3>Saturation</h3>
 					<ul class="smallerfont">
-						<li class="fragment"><span class="green">Saturation:</span> Computing the closure of a set of formulae with respect to a set of inference rules</li>
 						<li class="fragment">
-							Prove conjecture, $C$, by showing that <br>
-							&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">CNF(axioms $\cup$ $\{\sim C\}$)</span><br> is unsatisfiable
+							Prove conjecture $C$ from Axioms by showing that <br>
+							&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">CNF(Axioms $\cup$ $\{\sim C\}$)</span><br> is unsatisfiable
 						</li>
+						<li class="fragment"><span class="green">Saturation:</span> Compute the closure with sound inference rules</li>
 						<li class="fragment">Show unsatisfiability by inferring the empty clause via saturation</li>
 						<!-- <li class="fragment smaller green">(Intuition: the empty clause must be false because if the empty clause were true, then every clause would need to be as well: <br>$empty | false \equiv false$)</li> -->
 					</ul>
@@ -181,6 +195,32 @@
 					<ul>
 						<li style="font-size: 0.7em;">Improving given clause selection is a core goal of ATP research</li>
 					</ul>
+				</section>
+
+				<section id="eprover">
+					<h4>The E Theorem Prover</h4>
+					<ul class="smallerfont">
+						<li class="fragment">
+							Saturation-based prover for full first-order logic with equality
+							<ul>
+								<li class="fragment">Now with full higher-order support!</li>
+							</ul>
+						</li>
+						<li class="fragment">High-performance
+							<ul>
+								<li class="fragment">Written in C</li>
+								<li class="fragment">Careful management of resources</li>
+							</ul>
+						</li>
+						<li class="fragment">Can automatically select guidance strategies:
+							<ul>
+								<li class="fragment smallerfont"> <span class="term">--auto</span></li>
+								<li class="fragment smallerfont"> <span class="term">--auto-schedule</span></li>
+							</ul>
+						</li>
+						<li class="fragment">Developed by Stephan Schulz (thank you 🙏)</li>
+					</ul>
+
 				</section>
 
 				<section id="eQueues">
@@ -202,19 +242,15 @@
 						}
 					</style>
 					<div class="Equeue box">
-
 						<div class="Eclause"> $\leftarrow$</div>
 						<div class="box Eclause" style="background-color:rgb(150, 255, 150)"></div>
 						<div class="box Eclause" style="background-color:rgb(255, 150, 150)"></div>
 						<div class="box Eclause" style="background-color:rgb(255, 255, 123)"></div>
 						<div class="box Eclause" style="background-color:rgb(150, 150, 255)"></div>
 						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
 						<div class="Eclause">$...$</div>
+						<div style="width:2em;"></div>
+						<div class="smallerfont">Clauseweight(PreferGoals,1,1,1)</div>
 					</div>
 
 					<div class="Equeue box">
@@ -224,12 +260,10 @@
 						<div class="box Eclause" style="background-color:rgb(255, 150, 150)"></div>
 						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
 						<div class="box Eclause" style="background-color:rgb(150, 150, 255)"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
 						<div class="Eclause">$...$</div>
+						<div style="width:2em;"></div>
+						<div class="smallerfont">Clauseweight(PreferNonGoals,1,1,1)
+						</div>
 					</div>
 
 					<div class="Equeue box">
@@ -239,12 +273,9 @@
 						<div class="box Eclause" style="background-color:rgb(150, 255, 150)"></div>
 						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
 						<div class="box Eclause" style="background-color:rgb(255, 150, 150)"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
 						<div class="Eclause">$...$</div>
+						<div style="width:2em;"></div>
+						<div class="smallerfont">Clauseweight(ByHornDist,1,1,1)</div>
 					</div>
 
 					$\vdots$
@@ -257,13 +288,9 @@
 						<div class="box Eclause" style="background-color:rgb(150, 150, 255)"></div>
 						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
 						<div class="box Eclause" style="background-color:rgb(150, 255, 150)"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-						<div class="Eclause"></div>
-
 						<div class="Eclause">$...$</div>
+						<div style="width:2em;"></div>
+						<div class="smallerfont">FIFOWeight(ConstPrio)</div>
 					</div>
 
 					<textarea  cols="50" rows="8" style="overflow: hidden;">
@@ -273,8 +300,8 @@ Example Heuristic in E:
 10 * Clauseweight(PreferGoals,1,1,1),
 10 * Clauseweight(PreferNonGoals,1,1,1),
 10 * Clauseweight(ByHornDist,1,1,1),
-1 * FIFOWeight(ConstPrio)
 ...
+1 * FIFOWeight(ConstPrio)
 					</textarea>
 
 				</section>
@@ -306,15 +333,15 @@ Example Heuristic in E:
 					<section id="enigma">
 						<h4>Previous Work: <span class="green">ENIGMA</span></h4>
 						<div class="row">
-							<ul style="font-size:0.7em;">
-								<li class="fragment">Clause evaluation comes from classifier probability</li>
+							<ul style="font-size:0.7em;width:100%;">
+								<br>
 								<li class="fragment">Clause features count tree walks</li>
 								<li class="fragment">Feature hashing</li>
-								<li class="fragment">Negated conjecture context</li>
-								<hr>
+								<li class="fragment">Negated conjecture context<hr></li>
+								<li class="fragment">Clause evaluation from classifier probability</li>
 								<li class="fragment">Compared with a <span class="green">Recursive</span> Neural Network</li>
 								<li class="fragment">
-									<span class="fragment">XGBoost</span>
+									<span>XGBoost</span>
 									<span class="fragment"><span class="green">&gt;</span> LibLinear</span>
 									<span class="fragment"><span class="green">&gt;</span> NN</span>
 									<span class="fragment"><span class="green">&gt;</span> baseline</span>
@@ -341,7 +368,7 @@ Example Heuristic in E:
 							<li class="fragment">First saturation-based RL method</li>
 							<li class="fragment">Each context clause votes on its "favorite" unprocessed clause</li>
 							<li class="fragment">Substantially improved base prover performance (Beagle)</li>
-							<li class="fragment">Close to E --auto performance</li>
+							<li class="fragment">Close to E <span class="term">--auto</span> performance</li>
 						</ul>
 						<aside class="notes">
 							
@@ -362,12 +389,51 @@ Example Heuristic in E:
 								</ul>
 							</li>
 							<li class="fragment">Transformer network with graph laplacian positional embeddings</li>
-							<li class="fragment">Beats E's --auto mode and even --auto-schedule!</li>
+							<li class="fragment">Beats E's <span class="term">--auto</span> mode and even <span class="term">--auto-schedule</span>!</li>
 						</ul>
 						<aside class="notes">
 							
 						</aside>
 					</section>
+				</section>
+
+
+
+				<section id="basicIdea">
+					<h3>General Idea of My Research</h3>
+					<ul class="smallerfont">
+						<li class="fragment">Use reinforcement learning to learn a policy that
+							<ul>
+								<li class="fragment">dynamically decides which queue (CEF) to use</li>
+								<li class="fragment">based on efficiently tracked state within E</li>
+							</ul>
+						</li>
+						<li class="fragment">E &nbsp;&nbsp;<span class="green">$\leftarrow$named pipes$\rightarrow$</span>&nbsp;&nbsp; PyTorch</li>
+						<li class="fragment green">Sidesteps clause representation</li>
+						<li class="fragment green">Little overhead compared to neural clause evaluation</li>
+					</ul>
+
+					<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
+Example Heuristic in E:
+(fixed for a proof attempt)
+
+10 * Clauseweight(PreferGoals,1,1,1),
+10 * Clauseweight(PreferNonGoals,1,1,1),
+10 * Clauseweight(ByHornDist,1,1,1),
+1 * FIFOWeight(ConstPrio)
+...
+												
+					</textarea>
+					<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
+Example "heuristic" in RL mode 
+(probabilities change during proof attempt):
+
+0.5 * Clauseweight(PreferGoals,1,1,1),
+0.2 * Clauseweight(PreferNonGoals,1,1,1),
+0.1 * Clauseweight(ByHornDist,1,1,1),
+0.1 * FIFOWeight(ConstPrio),
+...
+					</textarea>
 				</section>
 
 
@@ -450,38 +516,6 @@ Example Heuristic in E:
 				</section>
 
 
-				<section id="basicIdea">
-					<h3>General Idea of My Research</h3>
-					<ul class="smallerfont">
-						<li class="fragment">Dynamically decide which queue (CEF) to use</li>
-						<li class="fragment">Based on efficiently tracked state within E</li>
-						<li class="fragment">E &nbsp;&nbsp;<span class="green">$\leftarrow$named pipes$\rightarrow$</span>&nbsp;&nbsp; PyTorch</li>
-						<li class="fragment green">Sidesteps clause representation</li>
-						<li class="fragment green">Little overhead compared to neural clause evaluation</li>
-					</ul>
-
-					<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
-Example Heuristic in E:
-(fixed for a proof attempt)
-
-10 * Clauseweight(PreferGoals,1,1,1),
-10 * Clauseweight(PreferNonGoals,1,1,1),
-10 * Clauseweight(ByHornDist,1,1,1),
-1 * FIFOWeight(ConstPrio)
-...
-												
-					</textarea>
-					<textarea class="fragment" cols="50" rows="8" style="overflow: hidden;">
-Example "heuristic" in RL mode 
-(probabilities change during proof attempt):
-
-0.5 * Clauseweight(PreferGoals,1,1,1),
-0.2 * Clauseweight(PreferNonGoals,1,1,1),
-0.1 * Clauseweight(ByHornDist,1,1,1),
-0.1 * FIFOWeight(ConstPrio),
-...
-					</textarea>
-				</section>
 
 				<section id="ReinforcementLearning">
 
@@ -509,16 +543,24 @@ Example "heuristic" in RL mode
 					</section>
 
 					<section>
-						<h3>RL Actions in E</h3>
+						<h3>RL Actions in E / Strategy Curation</h3>
 						<ul class="small">
-							<li class="green smallerfont">choice from a fixed set of CEFs</li>
-							<li class="fragment smallerfont">Which CEFs should be available?</li>
-							<li class="fragment smallerfont">For each dataset:
+							<li class="fragment smallerfont">Choice from a <span class="green">fixed set</span> of CEFs<hr></li>
+
+							<li class="fragment smallerfont">To determine this <span class="green">fixed set for each dataset:</span>
 								<ul>
-									<li>all CEFs ever used by --auto</li>
-								</ul> 
+									<li class="fragment">Run E with <span class="term">--auto --print-strategy</span> on all problems</li>
+									<li class="fragment">Merge these strategies into one <span class="green">master strategy</span>
+										<ul>
+											<li class="fragment" style="font-size:0.95em;">Most <span class="green">strategy</span> components set to their most common value</li>
+											<li class="fragment" style="font-size:0.95em;">Every CEF is included in the <span class="green">master strategy</span> heuristic</li>
+											<li class="fragment" style="font-size:0.95em;">Heuristic weights set intuitively $\rightarrow$ <span class="green">Master</li>
+											<li class="fragment" style="font-size:0.95em;">Heuristic weights set to <span class="green">1</span> $\rightarrow$ <span class="green">MasterAllOnes</li>
+										</ul>
+									</li>
+								</ul>
 							</li>
-							<li class="fragment smallerfont">~40 CEFs for each dataset</li>
+							<li class="fragment smallerfont"><hr>~40 CEFs for each dataset</li>
 						</ul>
 					</section>
 
@@ -572,13 +614,13 @@ Example "heuristic" in RL mode
 							</li>
 							<hr class="fragment">
 							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
-								<span class="green" style="text-decoration:underline">--auto</span>:
-								<span class="smallfont">E's best strategy <span class="yellow">(other than --auto-schedule)</span></span>
+								<span class="green term" style="text-decoration:underline">--auto</span>:
+								<span class="smallfont">E's best strategy <span class="yellow">(other than <span class="term">--auto-schedule</span>)</span></span>
 							</li>
 							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
 								<span class="green" style="text-decoration:underline">Master / MasterAllOnes</span>:
 								<span class="smallfont"> 
-									<br><span class="yellow">(Derived from --auto over that dataset)</span>
+									<br><span class="yellow">(Derived from <span class="term">--auto</span> over that dataset)</span>
 								</span>
 							</li>
 						</ul>
@@ -587,18 +629,37 @@ Example "heuristic" in RL mode
 					<section>
 						<h3>Datasets</h3>
 						<ul style="font-size:0.7em;">
-							<li class="fragment"><span class="green">MPTPTP2078</span> - Small First Order Problems</li>
-							<li class="fragment"><span class="green">VBT</span> - Big Typed First Order Problems</li>
-							<li class="fragment"><span class="green">SLH-29</span> - Higher Order Problems</li>
+							<li class="fragment"><span class="green">MPTPTP2078</span> - Small First Order Problems
+								<ul>
+									<li class="fragment">Mizar Mathematical Library</li>
+								</ul>
+							</li>
+							<br>
+							<li class="fragment"><span class="green">VBT</span> - Big Typed First Order Problems
+								<ul>
+									<li class="fragment">Used in CASCJ11</li>
+									<li class="fragment"><em style="text-decoration: underline;">van Emde Boas Trees</em> entry in Isabelle's Archive of Formal Proofs (AFP)</li>
+								</ul>
+							</li>
+							<br>
+							<li class="fragment"><span class="green">SLH-29</span> - Higher Order Problems
+								<ul>
+									<li class="fragment">Used in CASCJ11</li>
+									<li class="fragment">From Isabelle's Sledgehammer mode</li>
+								</ul>
+							</li>
 						</ul>
 					</section>
 	
 					<section>
 						<h3>Experiment Details</h3>
 						<ul style="font-size:0.7em;">
-							<li class="fragment">CPU Limit for proof attempts: <span class="green">60 seconds</span></li>
-							<li class="fragment"><span class="green">75 seconds</span> were given when testing the RL models
-								to account for latency caused by the named pipe communication</li>
+							<li class="fragment">CPU limit for non-learning methods: <span class="green">60 seconds</span></li>
+							<li class="fragment">CPU limit for learning methods: <span class="green">75 seconds</span>
+								<ul>
+									<li class="fragment">This was done to account for named pipe communication latency</li>
+								</ul>
+							</li>
 						</ul>
 					</section>
 				</section>
@@ -725,11 +786,15 @@ Example "heuristic" in RL mode
 								</tr>
 							</table>
 							<ul class="smallestfont" style="width:47%;margin-left:4%;">
-								<li class="fragment">Strategy selection is most important</li>
-								<li class="fragment">Best results on <span class="green">MPTPTP2078</span></li>
-								<li class="fragment">Promising as part of a portfolio<br> 
+								<li class="fragment smallerfont">Strategy selection is most important</li>
+								<li class="fragment smallerfont">Best results on <span class="green">MPTPTP2078</span>
 									<ul>
-										<li><span style="font-size:0.7em;font-family: monospace;">(--auto-schedule)</span></li>
+										<li class="fragment">Successfully learned to find proofs</li>
+									</ul>
+								</li>
+								<li class="fragment smallerfont">Promising as part of a portfolio<br> 
+									<ul>
+										<li><span class="term">--auto-schedule</span></li>
 									</ul>
 									
 								</li>
@@ -741,16 +806,15 @@ Example "heuristic" in RL mode
 					
 					
 					<section id="processedTables">
-						<h3>Number of Processed Clauses</h3>
+						<h3>Number of Given Clauses</h3>
 						<div class="row">
-
 
 							<table style="font-size:0.4em;">
 							<tr><th></th><th></th><th>MPTPTP2078</th></tr>
 
 								<tr>
 								<th>Run</th>
-								<th>Processed</th>
+								<th>Given Clauses</th>
 								<th>vs Auto</th>
 								</tr>
 								<tr>
@@ -789,7 +853,7 @@ Example "heuristic" in RL mode
 
 								<tr>
 								<th>Run</th>
-								<th>Processed</th>
+								<th>Given Clauses</th>
 								<th>vs Auto</th>
 								</tr>
 								<tr>
@@ -831,7 +895,7 @@ Example "heuristic" in RL mode
 	
 								<tr>
 								<th>Run</th>
-								<th>Processed</th>
+								<th>Given Clauses</th>
 								<th>vs Auto</th>
 								</tr>
 								<tr>
@@ -867,8 +931,9 @@ Example "heuristic" in RL mode
 							</table>
 							
 							<ul class="smallestfont" style="width:47%;margin-left:4%;">
-								<li class="fragment">Learning-based approaches require processing fewer clauses for <span class="green">MPTPTP2078</span></li>
-								<li class="fragment">Fewer processed clauses required by <em>all</em> methods for <span class="green">MPTPTP2078</span></li>
+								<li class="fragment smallerfont">Learning-based approaches require fewer given clauses for <span class="green">MPTPTP2078</span></li>
+								<li class="fragment smallerfont">Fewer given clauses required by <em>all</em> methods for <span class="green">MPTPTP2078</span></li>
+								<li class="fragment smallerfont">Indicates intelligent proof search! 🎉</li>
 							</ul>
 						</div>
 
@@ -1147,7 +1212,7 @@ Example "heuristic" in RL mode
 					</section>
 
 					<section id="efficiencyTables">
-						<h6 class="smallerfont">Efficiency (proof clauses / processed clauses)</h6>
+						<h6 class="smallerfont">Efficiency (proof clauses / Given Clauses)</h6>
 						<div class="row">
 							<table style="font-size:0.4em;">
 							<tr><th></th><th>MPTPTP2078</th></tr>
@@ -1250,7 +1315,8 @@ Example "heuristic" in RL mode
 								</tr>                                                                                                                                                                                                                                                                                                                      
 							</table> 
 							<ul class="smallestfont" style="width:47%;margin-left:4%;">
-								<li class="fragment">~2% for <span class="green">VBT</span> and <span class="green">SLH-29</span> vs ~20% for <span class="green">MPTPTP2078</span></li>
+								<li class="fragment">~2% for <span class="green">VBT</span> and <span class="green">SLH-29</span></li>
+								<li class="fragment">~20% for <span class="green">MPTPTP2078</span></li>
 							</ul>
 						</div>
 
