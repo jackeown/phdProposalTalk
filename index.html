@@ -39,6 +39,10 @@
 			.yellow{
 				color:rgb(255, 255, 123);
 			}
+			.blue{
+				color:rgb(150, 150, 255);
+			}
+
 			.row{
 				display:flex;
 				flex-direction:row;
@@ -250,7 +254,7 @@
 						<div class="box Eclause" style="background-color:rgb(250, 170, 10)"></div>
 						<div class="Eclause">$...$</div>
 						<div style="width:2em;"></div>
-						<div class="smallerfont">Clauseweight(PreferGoals,1,1,1)</div>
+						<div class="smallerfont">10*Clauseweight(PreferGoals,1,1,1)</div>
 					</div>
 
 					<div class="Equeue box">
@@ -262,7 +266,7 @@
 						<div class="box Eclause" style="background-color:rgb(150, 150, 255)"></div>
 						<div class="Eclause">$...$</div>
 						<div style="width:2em;"></div>
-						<div class="smallerfont">Clauseweight(PreferNonGoals,1,1,1)
+						<div class="smallerfont">10*Clauseweight(PreferNonGoals,1,1,1)
 						</div>
 					</div>
 
@@ -275,7 +279,7 @@
 						<div class="box Eclause" style="background-color:rgb(255, 150, 150)"></div>
 						<div class="Eclause">$...$</div>
 						<div style="width:2em;"></div>
-						<div class="smallerfont">Clauseweight(ByHornDist,1,1,1)</div>
+						<div class="smallerfont">10*Clauseweight(ByHornDist,1,1,1)</div>
 					</div>
 
 					$\vdots$
@@ -290,7 +294,7 @@
 						<div class="box Eclause" style="background-color:rgb(150, 255, 150)"></div>
 						<div class="Eclause">$...$</div>
 						<div style="width:2em;"></div>
-						<div class="smallerfont">FIFOWeight(ConstPrio)</div>
+						<div class="smallerfont">1*FIFOWeight(ConstPrio)</div>
 					</div>
 
 					<textarea  cols="50" rows="8" style="overflow: hidden;">
@@ -594,26 +598,6 @@ Example "heuristic" in RL mode
 						<h3>Approaches Compared</h3>
 						<ul style="font-size:0.7em;">
 							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
-								<span class="green" style="text-decoration:underline">Neural Network</span>:
-								<span class="smallfont">A shallow neural network policy</span>
-							</li>
-							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
-								<span class="green" style="text-decoration:underline">Constant Categorical</span>:
-								<span class="smallfont">
-									Randomly samples CEF from a learned distribution
-									<br><span class="yellow">(Ignores RL State)</span>
-								</span>
-							</li>
-							<hr class="fragment">
-							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
-								<span class="green" style="text-decoration:underline">Distilled Categorical</span>:
-								<span class="smallfont">
-									ConstCat reduced to a standard E heuristic.
-									<br><span class="yellow">(Removes randomness and overhead)</span>
-								</span>
-							</li>
-							<hr class="fragment">
-							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
 								<span class="green term" style="text-decoration:underline">--auto</span>:
 								<span class="smallfont">E's best strategy <span class="yellow">(other than <span class="term">--auto-schedule</span>)</span></span>
 							</li>
@@ -623,6 +607,29 @@ Example "heuristic" in RL mode
 									<br><span class="yellow">(Derived from <span class="term">--auto</span> over that dataset)</span>
 								</span>
 							</li>
+
+
+
+							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
+								<span class="blue" style="text-decoration:underline">Constant Categorical</span>:
+								<span class="smallfont">
+									Randomly samples CEF from a learned distribution
+									<br><span class="yellow">(Ignores RL State)</span>
+								</span>
+							</li>
+							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
+								<span class="green" style="text-decoration:underline">Distilled Categorical</span>:
+								<span class="smallfont">
+									ConstCat reduced to a standard E heuristic.
+									<br><span class="yellow">(Removes randomness and overhead)</span>
+								</span>
+							</li>
+
+							<li class="fragment" style="margin-bottom:10px;line-height:1.3em;">
+								<span class="blue" style="text-decoration:underline">Neural Network</span>:
+								<span class="smallfont">A shallow neural network policy</span>
+							</li>
+
 						</ul>
 					</section>
 
